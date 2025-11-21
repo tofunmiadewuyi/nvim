@@ -22,16 +22,6 @@ require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
-  -- NOTE: Plugins can also be added by using a table,
-  -- with the first argument being the link and the following
-  -- keys can be used to configure plugin behavior/loading/etc.
-  --
-  -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
-  --
-
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`.
-  --
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -43,10 +33,17 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      current_line_blame = true,
+      current_line_blame_opts = {
+        virt_text = true,
+        virt_text_pos = 'eol', -- end of line
+        delay = 100, -- delay in ms
+      },
+      current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
     },
   },
 
-  {
+  { -- DASHBOARD
     'nvimdev/dashboard-nvim',
     event = 'VimEnter',
     config = function()
@@ -85,7 +82,102 @@ require('lazy').setup({
     dependencies = { { 'nvim-tree/nvim-web-devicons' } },
   },
 
+  -- gruvbox theme
   { 'ellisonleao/gruvbox.nvim', priority = 1000, config = true, opts = ... },
+
+  { -- COMMENTS
+    'numToStr/Comment.nvim',
+    opts = {},
+    config = function()
+      require('Comment').setup()
+    end,
+  },
+
+  { -- TERMINAL
+    'nvzone/floaterm',
+    dependencies = 'nvzone/volt',
+    opts = {
+      mappings = {
+        term = function(buf)
+          vim.keymap.set({ 'n', 't' }, '<C-p>', function()
+            require('floaterm.api').cycle_term_bufs 'prev'
+          end, { buffer = buf })
+        end,
+      },
+    },
+    cmd = 'FloatermToggle',
+  },
+
+  -- tabs that show on top, buffferline
+  { 'akinsho/bufferline.nvim', version = '*', dependencies = 'nvim-tree/nvim-web-devicons' },
+
+  { -- FOLDS
+    'kevinhwang91/nvim-ufo',
+    dependencies = 'kevinhwang91/promise-async',
+    config = function()
+      vim.o.foldcolumn = '1'
+      vim.o.foldlevel = 99
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
+
+      -- Add folding capabilities to your LSP
+      local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      }
+
+      require('ufo').setup {
+        provider_selector = function(bufnr, filetype)
+          if filetype == 'vue' then
+            return { 'lsp', 'indent' }
+          end
+          return { 'treesitter', 'indent' }
+        end,
+      }
+
+      -- Keymaps
+      vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+      vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+    end,
+  },
+
+  { -- ROSE PINE THEME
+    'rose-pine/neovim',
+    name = 'rose-pine',
+    config = function()
+      vim.cmd 'colorscheme rose-pine'
+    end,
+  },
+  {
+    'sphamba/smear-cursor.nvim',
+    opts = {},
+  },
+  {
+    'rcarriga/nvim-notify',
+    config = function()
+      require('notify').setup {
+        background_colour = '#000000',
+        fps = 30,
+        icons = {
+          DEBUG = '',
+          ERROR = '',
+          INFO = '',
+          TRACE = '✎',
+          WARN = '',
+        },
+        level = 2,
+        minimum_width = 50,
+        render = 'default',
+        stages = 'fade_in_slide_out',
+        timeout = 5000,
+        top_down = true,
+      }
+
+      -- Set as default notify function
+      vim.notify = require 'notify'
+    end,
+  },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -231,7 +323,7 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>fs', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -278,8 +370,7 @@ require('lazy').setup({
       },
     },
   },
-  {
-    -- Main LSP Configuration
+  { -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
@@ -677,10 +768,7 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
+  { -- Colorscheme
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
@@ -745,7 +833,22 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'css',
+        'scss',
+        'jsdoc',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -765,22 +868,17 @@ require('lazy').setup({
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
-  -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
-
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
-  --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
+  require 'custom.plugins.autotags',
   require 'kickstart.plugins.neo-tree',
-  vim.keymap.set('n', '<D-b>', ':Neotree toggle<CR>', { desc = 'Toggle File Explorer' }),
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+
+  vim.keymap.set('n', '<D-b>', ':Neotree toggle<CR>', { desc = 'Toggle File Explorer' }),
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.

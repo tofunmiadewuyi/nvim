@@ -21,17 +21,33 @@ local vtsls_config = {
   filetypes = tsserver_filetypes,
 }
 
-local ts_ls_config = {
-  init_options = {
-    plugins = {
-      vue_plugin,
-    },
-  },
-  filetypes = tsserver_filetypes,
-}
+-- local ts_ls_config = {
+--   init_options = {
+--     plugins = {
+--       vue_plugin,
+--     },
+--   },
+--   filetypes = tsserver_filetypes,
+-- }
 
 local vue_ls_config = {}
 vim.lsp.config('vtsls', vtsls_config)
 vim.lsp.config('vue_ls', vue_ls_config)
+-- vim.lsp.config('tsgo', {})
 -- vim.lsp.config('ts_ls', ts_ls_config)
 vim.lsp.enable { 'vtsls', 'vue_ls' }
+--
+-- local base_on_attach = vim.lsp.config.eslint.on_attach
+-- vim.lsp.config('eslint', {
+--   on_attach = function(client, bufnr)
+--     if not base_on_attach then
+--       return
+--     end
+--
+--     base_on_attach(client, bufnr)
+--     vim.api.nvim_create_autocmd('BufWritePre', {
+--       buffer = bufnr,
+--       command = 'LspEslintFixAll',
+--     })
+--   end,
+-- })

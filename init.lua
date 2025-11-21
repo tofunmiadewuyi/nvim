@@ -160,19 +160,15 @@ vim.keymap.set('n', '<leader>w', ':update<Return>', { desc = 'Save file' })
 vim.keymap.set('n', '<leader>q', ':q<Return>', { desc = 'Quit' })
 vim.keymap.set('n', '<leader>Q', ':qa<Return>', { desc = 'Quit all' })
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+
+-- Keybinds for commenting
+vim.keymap.set('n', '<D-/>', 'gcc', { desc = 'Toggle comment line', remap = true })
+vim.keymap.set('v', '<D-/>', 'gc', { desc = 'Toggle comment selection', remap = true })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -182,12 +178,6 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -203,11 +193,77 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier:
+-- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
+-- is not what someone will guess without a bit more experience.
+--
+-- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
+-- or just use <C-\><C-n> to exit terminal mode
+--
+-- local term_buf_id = nil
+-- local term_win_id = nil
+--
+-- vim.keymap.set('n', '<leader>st', function()
+--   -- Check if terminal window exists and is visible
+--   if term_win_id and vim.api.nvim_win_is_valid(term_win_id) then
+--     -- Terminal is visible, hide it
+--     vim.api.nvim_win_close(term_win_id, false)
+--     term_win_id = nil
+--   else
+--     -- Terminal is hidden or doesn't exist
+--     if term_buf_id and vim.api.nvim_buf_is_valid(term_buf_id) then
+--       -- Reuse existing terminal buffer
+--       vim.cmd.split()
+--       vim.cmd.wincmd 'J'
+--       vim.api.nvim_win_set_height(0, 15)
+--       vim.api.nvim_win_set_buf(0, term_buf_id)
+--       term_win_id = vim.api.nvim_get_current_win()
+--     else
+--       -- Create new terminal
+--       vim.cmd.split()
+--       vim.cmd.term()
+--       vim.cmd.wincmd 'J'
+--       vim.api.nvim_win_set_height(0, 7)
+--       term_buf_id = vim.api.nvim_get_current_buf()
+--       term_win_id = vim.api.nvim_get_current_win()
+--     end
+--   end
+-- end, { desc = 'Toggle terminal' })
+
+vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open diagnostic issue' })
+
 -- LAZY PLUGIN MANAGER
 require 'config.lazy'
 
+-- THEMES
 require 'config.theme'
 
+-- LSPs
 require 'config.lsp'
+
+-- COMPLETION
+require 'config.cmp'
+
+-- -- FOLD
+-- vim.opt.foldmethod = 'expr'
+-- vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+-- vim.opt.foldenable = false -- start with folds open
+
+-- floating terminal
+vim.keymap.set('n', '<leader>t', ':FloatermToggle<CR>', { desc = 'Toggle Floating Terminal' })
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>:FloatermToggle<CR>', { desc = 'Exit terminal mode' })
+
+vim.opt.termguicolors = true
+require('bufferline').setup {
+  options = {
+    diagnostics = 'nvim_lsp',
+    separator_style = 'slant', -- or "slant" for underlines
+    -- show_buffer_close_icons = false,
+    -- show_close_icon = false,
+  },
+}
+vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>')
+vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>')
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

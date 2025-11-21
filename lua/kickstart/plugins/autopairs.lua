@@ -3,15 +3,17 @@
 
 return {
   'windwp/nvim-autopairs',
+  dependencies = { 'hrsh7th/nvim-cmp' },
   event = 'InsertEnter',
   opts = {},
   config = function()
     require('nvim-autopairs').setup {
-      opts = {
-        enable_close = true, -- Auto close tags
-        enable_rename = true, -- Auto rename pairs of tags
-        enable_close_on_slash = false, -- Auto close on trailing </
-      },
+      check_ts = true, -- enable treesitter
     }
+
+    -- Integration with completion
+    local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
+    local cmp = require 'cmp'
+    cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
   end,
 }

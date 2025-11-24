@@ -64,7 +64,7 @@ vim.g.have_nerd_font = true
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -156,9 +156,9 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 --  end, opts)
 
 -- LEADERS
-vim.keymap.set('n', '<leader>w', ':update<Return>', { desc = 'Save file' })
-vim.keymap.set('n', '<leader>q', ':q<Return>', { desc = 'Quit' })
-vim.keymap.set('n', '<leader>Q', ':qa<Return>', { desc = 'Quit all' })
+vim.keymap.set('n', '<leader>w', ':noa w<Return>', { desc = 'Save file without formatting' })
+vim.keymap.set('n', '<D-s>', ':update<Return>', { desc = 'Save file with formatting' })
+-- vim.keymap.set('n', '<leader>q', ':q<Return>', { desc = 'Quit' })
 
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -170,9 +170,13 @@ vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 vim.keymap.set('n', '<D-/>', 'gcc', { desc = 'Toggle comment line', remap = true })
 vim.keymap.set('v', '<D-/>', 'gc', { desc = 'Toggle comment selection', remap = true })
 
+-- Reload Config
+vim.keymap.set('n', '<leader>rc', function()
+  vim.cmd 'source ~/.config/nvim/init.lua'
+  vim.notify('Config reloaded!', vim.log.levels.INFO, { title = 'Neovim' })
+end, { desc = 'Reload config' })
+
 -- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -200,35 +204,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 --
--- local term_buf_id = nil
--- local term_win_id = nil
---
--- vim.keymap.set('n', '<leader>st', function()
---   -- Check if terminal window exists and is visible
---   if term_win_id and vim.api.nvim_win_is_valid(term_win_id) then
---     -- Terminal is visible, hide it
---     vim.api.nvim_win_close(term_win_id, false)
---     term_win_id = nil
---   else
---     -- Terminal is hidden or doesn't exist
---     if term_buf_id and vim.api.nvim_buf_is_valid(term_buf_id) then
---       -- Reuse existing terminal buffer
---       vim.cmd.split()
---       vim.cmd.wincmd 'J'
---       vim.api.nvim_win_set_height(0, 15)
---       vim.api.nvim_win_set_buf(0, term_buf_id)
---       term_win_id = vim.api.nvim_get_current_win()
---     else
---       -- Create new terminal
---       vim.cmd.split()
---       vim.cmd.term()
---       vim.cmd.wincmd 'J'
---       vim.api.nvim_win_set_height(0, 7)
---       term_buf_id = vim.api.nvim_get_current_buf()
---       term_win_id = vim.api.nvim_get_current_win()
---     end
---   end
--- end, { desc = 'Toggle terminal' })
 
 vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open diagnostic issue' })
 
@@ -244,14 +219,26 @@ require 'config.lsp'
 -- COMPLETION
 require 'config.cmp'
 
--- -- FOLD
--- vim.opt.foldmethod = 'expr'
--- vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
--- vim.opt.foldenable = false -- start with folds open
+-- Override gitsigns colors after colorscheme loads
+vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#1D422C' })
+vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#474550' })
+vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 
--- floating terminal
-vim.keymap.set('n', '<leader>t', ':FloatermToggle<CR>', { desc = 'Toggle Floating Terminal' })
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>:FloatermToggle<CR>', { desc = 'Exit terminal mode' })
+local function smart_terminal()
+  -- Look for existing terminal buffers
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == 'terminal' then
+      -- Found terminal, switch to it
+      vim.cmd('buffer ' .. buf)
+      return
+    end
+  end
+  -- No terminal found, create new one
+  vim.cmd 'terminal'
+end
+
+vim.keymap.set('n', '<leader>t', smart_terminal, { desc = 'Open/switch to terminal' })
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n><C-o>', { desc = 'Exit terminal and go to previous buffer' })
 
 vim.opt.termguicolors = true
 require('bufferline').setup {
@@ -264,6 +251,23 @@ require('bufferline').setup {
 }
 vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>')
 vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>')
+
+-- Show diagnostic popup automatically after cursor stops moving
+vim.api.nvim_create_autocmd('CursorHold', {
+  callback = function()
+    local opts = {
+      focusable = false,
+      close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
+      border = 'rounded',
+      source = 'always',
+      prefix = ' ',
+    }
+    vim.diagnostic.open_float(nil, opts)
+  end,
+})
+
+-- Set the delay (in milliseconds) before showing diagnostic
+vim.opt.updatetime = 500 -- 500ms delay, adjust as needed
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

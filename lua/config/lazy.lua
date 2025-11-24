@@ -27,11 +27,16 @@ require('lazy').setup({
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
+        add = { text = '▎' },
+        change = { text = '▎' },
+        delete = { text = '▎' },
+        topdelete = { text = '▎' },
+        changedelete = { text = '▎' },
+        -- add = { text = '+' },
+        -- change = { text = '~' },
+        -- delete = { text = '_' },
+        -- topdelete = { text = '‾' },
+        -- changedelete = { text = '~' },
       },
       current_line_blame = true,
       current_line_blame_opts = {
@@ -93,21 +98,6 @@ require('lazy').setup({
     end,
   },
 
-  { -- TERMINAL
-    'nvzone/floaterm',
-    dependencies = 'nvzone/volt',
-    opts = {
-      mappings = {
-        term = function(buf)
-          vim.keymap.set({ 'n', 't' }, '<C-p>', function()
-            require('floaterm.api').cycle_term_bufs 'prev'
-          end, { buffer = buf })
-        end,
-      },
-    },
-    cmd = 'FloatermToggle',
-  },
-
   -- tabs that show on top, buffferline
   { 'akinsho/bufferline.nvim', version = '*', dependencies = 'nvim-tree/nvim-web-devicons' },
 
@@ -115,7 +105,7 @@ require('lazy').setup({
     'kevinhwang91/nvim-ufo',
     dependencies = 'kevinhwang91/promise-async',
     config = function()
-      vim.o.foldcolumn = '1'
+      vim.o.foldcolumn = '0'
       vim.o.foldlevel = 99
       vim.o.foldlevelstart = 99
       vim.o.foldenable = true
@@ -149,11 +139,12 @@ require('lazy').setup({
       vim.cmd 'colorscheme rose-pine'
     end,
   },
-  {
+  { -- SMEAR CURSOR
+
     'sphamba/smear-cursor.nvim',
     opts = {},
   },
-  {
+  { -- NOTIFY
     'rcarriga/nvim-notify',
     config = function()
       require('notify').setup {
@@ -178,6 +169,36 @@ require('lazy').setup({
       vim.notify = require 'notify'
     end,
   },
+
+  { --TROUBLE
+    'folke/trouble.nvim',
+    opts = {},
+    cmd = 'Trouble',
+    keys = {
+      {
+        '<leader>xx',
+        '<cmd>Trouble diagnostics toggle<cr>',
+        desc = 'Diagnostics (Trouble)',
+      },
+      {
+        '<leader>xX',
+        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+        desc = 'Buffer Diagnostics (Trouble)',
+      },
+      {
+        '<leader>cs',
+        '<cmd>Trouble symbols toggle focus=false<cr>',
+        desc = 'Symbols (Trouble)',
+      },
+      {
+        '<leader>cl',
+        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+        desc = 'LSP Definitions / references / ... (Trouble)',
+      },
+    },
+  },
+
+  -- LAST PLUGIN, MOST RECENT PLUGIN
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -727,8 +748,7 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
-
+        preset = 'enter',
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
       },

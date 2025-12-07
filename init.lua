@@ -206,8 +206,7 @@ require 'config.lsp'
 -- COMPLETION
 require 'config.cmp'
 
-
-vim.cmd.colorscheme 'rose-pine-main'
+vim.cmd.colorscheme 'terafox'
 
 -- Override gitsigns colors after colorscheme loads
 vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#1D422C' })

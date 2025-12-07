@@ -206,19 +206,21 @@ require 'config.lsp'
 -- COMPLETION
 require 'config.cmp'
 
-vim.cmd.colorscheme 'duskfox'
+
+vim.cmd.colorscheme 'rose-pine-main'
 
 -- Override gitsigns colors after colorscheme loads
 vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#1D422C' })
 vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#474550' })
 vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
-
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n><C-o>', { desc = 'Exit terminal and go to previous buffer' })
+-- vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#0E0C19', fg = '#E2E8F0' })
+-- vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'none', fg = '#F2BE75' })
 
 vim.opt.termguicolors = true
 
 vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>')
 vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>')
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n><C-o>', { desc = 'Exit terminal and go to previous buffer' })
 
 -- Show diagnostic popup automatically after cursor stops moving
 vim.api.nvim_create_autocmd('CursorHold', {
@@ -245,8 +247,7 @@ vim.api.nvim_create_autocmd('CursorHold', {
 -- Set the delay (in milliseconds) before showing diagnostic
 vim.opt.updatetime = 500 -- 500ms delay, adjust as needed
 
--- close all buffer except current
--- vim.keymap.set('n', '<leader>bd', ':bd <CR>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<leader>bd', ':bd <CR>', { desc = 'Close buffer' })
 vim.keymap.set('n', '<leader>bo', function()
   local current = vim.api.nvim_get_current_buf()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -265,8 +266,6 @@ vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
   close_events = { 'CursorMoved', 'BufLeave', 'InsertEnter' },
   stylize_markdown = true,
 })
-vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#0E0C19', fg = '#E2E8F0' })
-vim.api.nvim_set_hl(0, 'FloatBorder', { bg = '#0E0C19', fg = '#F2BE75' })
 
 vim.keymap.set('n', '<leader>lr', ':LspRestart <CR>', { desc = 'Restart LSP' })
 vim.keymap.set('n', '<leader>li', ':LspInfo <CR>', { desc = 'LSP Info' })

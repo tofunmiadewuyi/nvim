@@ -58,7 +58,7 @@ require('lazy').setup({
     end,
   },
 
-  { --BUFFERLINE , tabs
+  { -- BUFFERLINE , tabs
     'akinsho/bufferline.nvim',
     version = '*',
     dependencies = 'nvim-tree/nvim-web-devicons',
@@ -66,7 +66,7 @@ require('lazy').setup({
       require('bufferline').setup {
         options = {
           diagnostics = 'nvim_lsp',
-          separator_style = 'slant', -- or "slant" for underlines
+          separator_style = 'thick', -- or "slant" for underlines
           -- show_buffer_close_icons = false,
           -- show_close_icon = false,
         },
@@ -133,6 +133,7 @@ require('lazy').setup({
       }
     end,
   },
+
   { -- SMEAR CURSOR
     'sphamba/smear-cursor.nvim',
     opts = {},
@@ -175,7 +176,6 @@ require('lazy').setup({
       { 'nvim-lua/plenary.nvim', lazy = true },
     },
     keys = {
-      -- 👇 in this section, choose your own keymappings!
       {
         '<up>',
         mode = { 'n', 'v' },
@@ -196,6 +196,7 @@ require('lazy').setup({
     },
     ---@type YaziConfig | {}
     opts = {
+      yazi_floating_window_winblend = 20, -- 0-100, transparency
       -- if you want to open yazi instead of netrw, see below for more info
       open_for_directories = false,
       keymaps = {
@@ -208,6 +209,36 @@ require('lazy').setup({
       --
       -- More details: https://github.com/mikavilpas/yazi.nvim/issues/802
       vim.g.loaded_netrwPlugin = 1
+    end,
+  },
+
+  { -- TRANSPARENT
+    'xiyaowong/transparent.nvim',
+    name = 'transparent',
+    config = function()
+      require('transparent').setup {
+        extra_groups = {
+          'TelescopeNormal',
+          'TelescopeBorder',
+          'TelescopePromptBorder',
+          'TelescopeResultsBorder',
+          'TelescopePreviewBorder',
+          'TelescopePromptNormal',
+          'TelescopeResultsNormal',
+          'TelescopePreviewNormal',
+          'TelescopePromptTitle',
+          'TelescopeResultsTitle',
+          'TelescopePreviewTitle',
+          'TelescopeSelection',
+          'TelescopeMatching',
+
+          'FloatBorder',
+          'FloatTitle',
+          'Pmenu',
+          'PmenuBorder',
+          'NormalFloat'
+        },
+      }
     end,
   },
 

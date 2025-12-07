@@ -92,6 +92,7 @@ vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.smarttab = true
 vim.opt.expandtab = true
+vim.opt.swapfile = false
 
 -- search
 vim.opt.path:append { '**' }
@@ -183,9 +184,6 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
--- [[ Basic Autocommands ]]
---  See `:help lua-guide-autocommands`
-
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
@@ -197,58 +195,28 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier:
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
---
-
 vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open diagnostic issue' })
 
 -- LAZY PLUGIN MANAGER
 require 'config.lazy'
-
 -- THEMES
 require 'config.theme'
-
 -- LSPs
 require 'config.lsp'
-
 -- COMPLETION
 require 'config.cmp'
+
+vim.cmd.colorscheme 'duskfox'
 
 -- Override gitsigns colors after colorscheme loads
 vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#1D422C' })
 vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#474550' })
 vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 
-local function smart_terminal()
-  -- Look for existing terminal buffers
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buftype == 'terminal' then
-      -- Found terminal, switch to it
-      vim.cmd('buffer ' .. buf)
-      return
-    end
-  end
-  -- No terminal found, create new one
-  vim.cmd 'terminal'
-end
-
-vim.keymap.set('n', '<leader>t', smart_terminal, { desc = 'Open/switch to terminal' })
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n><C-o>', { desc = 'Exit terminal and go to previous buffer' })
 
 vim.opt.termguicolors = true
-require('bufferline').setup {
-  options = {
-    diagnostics = 'nvim_lsp',
-    separator_style = 'slant', -- or "slant" for underlines
-    -- show_buffer_close_icons = false,
-    -- show_close_icon = false,
-  },
-}
+
 vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>')
 vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>')
 
@@ -262,12 +230,46 @@ vim.api.nvim_create_autocmd('CursorHold', {
       source = 'always',
       prefix = ' ',
     }
-    vim.diagnostic.open_float(nil, opts)
+    local _, winid = vim.diagnostic.open_float(nil, opts)
+    -- Auto-close after 3 seconds
+    if winid then
+      vim.defer_fn(function()
+        if vim.api.nvim_win_is_valid(winid) then
+          vim.api.nvim_win_close(winid, true)
+        end
+      end, 7000)
+    end
   end,
 })
 
 -- Set the delay (in milliseconds) before showing diagnostic
 vim.opt.updatetime = 500 -- 500ms delay, adjust as needed
+
+-- close all buffer except current
+-- vim.keymap.set('n', '<leader>bd', ':bd <CR>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<leader>bo', function()
+  local current = vim.api.nvim_get_current_buf()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if buf ~= current and vim.api.nvim_buf_is_valid(buf) then
+      vim.api.nvim_buf_delete(buf, {})
+    end
+  end
+end, { desc = 'Close all buffers except current' })
+
+-- Custom LSP hover window
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = 'rounded',
+  max_width = 80,
+  max_height = 20,
+  focusable = false,
+  close_events = { 'CursorMoved', 'BufLeave', 'InsertEnter' },
+  stylize_markdown = true,
+})
+vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#0E0C19', fg = '#E2E8F0' })
+vim.api.nvim_set_hl(0, 'FloatBorder', { bg = '#0E0C19', fg = '#F2BE75' })
+
+vim.keymap.set('n', '<leader>lr', ':LspRestart <CR>', { desc = 'Restart LSP' })
+vim.keymap.set('n', '<leader>li', ':LspInfo <CR>', { desc = 'LSP Info' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

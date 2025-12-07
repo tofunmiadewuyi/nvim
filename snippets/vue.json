@@ -1,0 +1,32 @@
+{
+  "Vue Base Template": {
+    "prefix": "vbase",
+    "body": [
+      "<template>",
+      "  <div>",
+      "    $1",
+      "  </div>",
+      "</template>",
+      "",
+      "<script setup lang=\"ts\">",
+      "$2",
+      "</script>",
+      "",
+      "<style scoped>",
+      "$3",
+      "</style>"
+    ],
+    "description": "Basic Vue SFC template"
+  },
+  "Vue Composition API": {
+    "prefix": "vcomp",
+    "body": [
+      "const $1 = ref($2)",
+      "",
+      "const $3 = computed(() => {",
+      "  return $4",
+      "})"
+    ],
+    "description": "Vue composition API refs and computed"
+  }
+}

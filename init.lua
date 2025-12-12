@@ -246,7 +246,10 @@ vim.api.nvim_create_autocmd('CursorHold', {
 -- Set the delay (in milliseconds) before showing diagnostic
 vim.opt.updatetime = 500 -- 500ms delay, adjust as needed
 
+-- buffer line combos
 vim.keymap.set('n', '<leader>bd', ':bd <CR>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<leader>bh', ':BufferLineMovePrev<CR>', { desc = 'Move buffer left' })
+vim.keymap.set('n', '<leader>bl', ':BufferLineMoveNext<CR>', { desc = 'Move buffer right' })
 vim.keymap.set('n', '<leader>bo', function()
   local current = vim.api.nvim_get_current_buf()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -255,6 +258,21 @@ vim.keymap.set('n', '<leader>bo', function()
     end
   end
 end, { desc = 'Close all buffers except current' })
+-- Move buffer to far left
+vim.keymap.set('n', '<leader>bH', function()
+  for i = 1, vim.fn.bufnr '$' do
+    vim.cmd 'BufferLineMovePrev'
+  end
+end, { desc = 'Move buffer to start' })
+
+-- Move buffer to far right
+vim.keymap.set('n', '<leader>bL', function()
+  for i = 1, vim.fn.bufnr '$' do
+    vim.cmd 'BufferLineMoveNext'
+  end
+end, { desc = 'Move buffer to end' })
+-- pick buffer
+vim.keymap.set('n', '<leader>bp', ':BufferLinePick<CR>', { desc = 'Pick buffer position' })
 
 -- Custom LSP hover window
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {

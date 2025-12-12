@@ -719,12 +719,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
         opts = {},
       },
@@ -775,7 +775,9 @@ require('lazy').setup({
       sources = {
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
-          lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          lsp = { score_offset = 150 },
+          buffer = { score_offset = 100 },
+          lazydev = { module = 'lazydev.integrations.blink', score_offset = 50 },
         },
       },
 
@@ -1005,6 +1007,13 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
+      -- Sessions support
+      require('mini.sessions').setup {
+        autoread = false,
+        autowrite = true,
+        directory = vim.fn.stdpath 'data' .. '/sessions/',
+      }
+
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
@@ -1071,11 +1080,11 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
-  -- require 'custom.plugins.autotags',
+  require 'custom.plugins.autotags',
   require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
-  vim.keymap.set('n', '<D-b>', ':Neotree toggle<CR>', { desc = 'Toggle File Explorer' }),
+  vim.keymap.set('n', '<C-b>', ':Neotree toggle<CR>', { desc = 'Toggle File Explorer' }),
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.

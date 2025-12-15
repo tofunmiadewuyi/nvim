@@ -106,7 +106,7 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
-vim.o.signcolumn = 'yes'
+vim.o.signcolumn = 'no'
 
 -- Decrease update time
 vim.o.updatetime = 250
@@ -118,6 +118,7 @@ vim.o.timeoutlen = 300
 vim.o.splitright = true
 vim.o.splitbelow = true
 
+vim.opt.numberwidth = 1
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
@@ -143,12 +144,15 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
+-- hide cms line
+vim.o.cmdheight = 0
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+vim.keymap.set('n', '<Esc>', function()
+  vim.fn.setreg('/', '')
+  vim.cmd 'nohlsearch'
+end)
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -197,7 +201,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open diagnostic issue' })
 
--- LAZY PLUGIN MANAGER
+-- LAZY
 require 'config.lazy'
 -- THEMES
 require 'config.theme'
@@ -217,8 +221,6 @@ vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 
 vim.opt.termguicolors = true
 
-vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>')
-vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n><C-o>', { desc = 'Exit terminal and go to previous buffer' })
 
 -- Show diagnostic popup automatically after cursor stops moving
@@ -247,6 +249,8 @@ vim.api.nvim_create_autocmd('CursorHold', {
 vim.opt.updatetime = 500 -- 500ms delay, adjust as needed
 
 -- buffer line combos
+vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>')
+vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>')
 vim.keymap.set('n', '<leader>bd', ':bd <CR>', { desc = 'Close buffer' })
 vim.keymap.set('n', '<leader>bh', ':BufferLineMovePrev<CR>', { desc = 'Move buffer left' })
 vim.keymap.set('n', '<leader>bl', ':BufferLineMoveNext<CR>', { desc = 'Move buffer right' })

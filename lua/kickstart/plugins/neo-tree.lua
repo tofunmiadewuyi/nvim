@@ -15,6 +15,12 @@ return {
   },
   opts = {
     filesystem = {
+      filtered_items = {
+        always_show = {
+          '.env',
+          '.gitignore',
+        },
+      },
       window = {
         position = 'float',
         mappings = {

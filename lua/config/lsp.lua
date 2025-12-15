@@ -72,5 +72,37 @@ vim.diagnostic.config {
 }
 
 
--- since ~/.config/nvim/lsp is a special folder they get autoloaded
-vim.lsp.enable { 'lua_ls', 'vtsls', 'vue_ls' }
+-- Setup LSP configurations with proper Mason paths
+local mason_bin = vim.fn.stdpath('data') .. '/mason/bin/'
+
+-- Get blink.cmp capabilities
+local capabilities = require('blink.cmp').get_lsp_capabilities()
+
+-- Load configurations and add command paths + capabilities
+local lua_ls_config = dofile(vim.fn.stdpath('config') .. '/lsp/lua_ls.lua')
+lua_ls_config.cmd = { mason_bin .. 'lua-language-server' }
+lua_ls_config.filetypes = { 'lua' }
+lua_ls_config.capabilities = capabilities
+
+local vtsls_config = dofile(vim.fn.stdpath('config') .. '/lsp/vtsls.lua')
+vtsls_config.cmd = { mason_bin .. 'vtsls', '--stdio' }
+vtsls_config.capabilities = capabilities
+
+vim.lsp.config('lua_ls', lua_ls_config)
+vim.lsp.config('vtsls', vtsls_config)
+
+-- Enable the LSP servers
+vim.lsp.enable { 'lua_ls', 'vtsls' }
+
+-- Add a simple LSP info command to replace LspInfo
+vim.api.nvim_create_user_command('LspStatus', function()
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  if #clients == 0 then
+    print('No LSP clients attached to current buffer')
+  else
+    print('LSP clients attached to current buffer:')
+    for _, client in pairs(clients) do
+      print('  - ' .. client.name .. ' (id: ' .. client.id .. ')')
+    end
+  end
+end, { desc = 'Show LSP client status for current buffer' })

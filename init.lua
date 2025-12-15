@@ -203,12 +203,9 @@ vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open diagn
 
 -- LAZY
 require 'config.lazy'
--- THEMES
-require 'config.theme'
 -- LSPs
 require 'config.lsp'
--- COMPLETION
-require 'config.cmp'
+-- COMPLETION is handled by blink.cmp in lazy.lua
 
 vim.cmd.colorscheme 'terafox'
 

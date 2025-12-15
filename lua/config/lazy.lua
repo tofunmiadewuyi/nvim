@@ -354,21 +354,19 @@ require('lazy').setup({
     },
   },
 
-  { -- LSP
-    'neovim/nvim-lspconfig',
+  { -- Mason and LSP setup
+    'mason-org/mason.nvim',
     dependencies = {
-      { 'mason-org/mason.nvim', opts = {} },
-      'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       { 'j-hui/fidget.nvim', opts = {} },
       'saghen/blink.cmp',
     },
     config = function()
+      require('mason').setup()
       require 'config.lsp'
       require('mason-tool-installer').setup {
         ensure_installed = { 'lua-language-server', 'stylua', 'vue-language-server', 'vtsls' },
       }
-      require('mason-lspconfig').setup()
     end,
   },
 

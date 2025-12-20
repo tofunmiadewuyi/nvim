@@ -1,6 +1,23 @@
 return {
 
-  { 'ellisonleao/gruvbox.nvim', priority = 1000, config = true, opts = ... },
+  { 'ellisonleao/gruvbox.nvim', config = true, opts = ... },
+  { 
+    'datsfilipe/vesper.nvim',
+    config = function()
+      require('vesper').setup({
+        transparent = false,
+        italics = {
+          comments = true,
+          keywords = true,
+          functions = true,
+          strings = true,
+          variables = true
+        },
+        overrides = {},
+        palette_overrides = {}
+      })
+    end,
+  },
 
   { -- ROSE PINE THEME
     'rose-pine/neovim',
@@ -8,9 +25,9 @@ return {
     config = function()
       require('rose-pine').setup {
         palette = {
-          main = {
-            base = '#050310',
-          },
+          -- main = {
+          --   base = '#050310',
+          -- },
         },
       }
     end,

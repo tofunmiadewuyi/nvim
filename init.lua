@@ -207,7 +207,8 @@ require 'config.lazy'
 require 'config.lsp'
 -- COMPLETION is handled by blink.cmp in lazy.lua
 
-vim.cmd.colorscheme 'terafox'
+-- vim.cmd.colorscheme 'terafox'
+vim.cmd.colorscheme 'vesper'
 
 -- Override gitsigns colors after colorscheme loads
 vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#1D422C' })

@@ -13,7 +13,7 @@ rtp:prepend(lazypath)
 
 require('lazy').setup({
   -- THEMES
-  require('config.themes'),
+  require 'config.themes',
 
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
@@ -62,6 +62,7 @@ require('lazy').setup({
           show_buffer_close_icons = false,
           -- show_close_icon = false,
         },
+        highlights = require('vesper').bufferline.highlights,
       }
     end,
   },
@@ -85,7 +86,7 @@ require('lazy').setup({
       require('ufo').setup {
         provider_selector = function(bufnr, filetype)
           if filetype == 'vue' then
-            return { 'lsp', 'indent' }
+            return { 'treesitter', 'indent' }
           end
           return { 'treesitter', 'indent' }
         end,
@@ -365,7 +366,7 @@ require('lazy').setup({
       require('mason').setup()
       require 'config.lsp'
       require('mason-tool-installer').setup {
-        ensure_installed = { 'lua-language-server', 'stylua', 'vue-language-server', 'vtsls' },
+        ensure_installed = { 'lua-language-server', 'stylua', 'vue-language-server', 'vtsls', 'prettier' },
       }
     end,
   },
@@ -402,11 +403,14 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettier' },
+        typescript = { 'prettier' },
+        vue = { 'prettier' },
+        javascriptreact = { 'prettier' },
+        typescriptreact = { 'prettier' },
+        json = { 'prettier' },
+        css = { 'prettier' },
+        html = { 'prettier' },
       },
     },
   },
@@ -691,10 +695,10 @@ require('lazy').setup({
   },
 
   { -- TODO COMMENTS
-    'folke/todo-comments.nvim', 
-    event = 'VimEnter', 
-    dependencies = { 'nvim-lua/plenary.nvim' }, 
-    opts = { signs = false } 
+    'folke/todo-comments.nvim',
+    event = 'VimEnter',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = { signs = false },
   },
 
   { -- MINI
@@ -733,7 +737,8 @@ require('lazy').setup({
           active = function()
             local mode, mode_hl = MiniStatusline.section_mode { trunc_width = 120 }
             local git = MiniStatusline.section_git { trunc_width = 75 }
-            local filename = MiniStatusline.section_filename { trunc_width = 140 }
+            -- local filename = MiniStatusline.section_filename { trunc_width = 140 }
+            local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':.')
             local location = MiniStatusline.section_location { trunc_width = 75 }
 
             return MiniStatusline.combine_groups {
@@ -812,7 +817,6 @@ require('lazy').setup({
   require 'kickstart.plugins.neo-tree',
 
   vim.keymap.set('n', '<C-b>', ':Neotree toggle<CR>', { desc = 'Toggle File Explorer' }),
-
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the

@@ -178,7 +178,8 @@ vim.keymap.set('v', '<D-/>', 'gc', { desc = 'Toggle comment selection', remap = 
 -- Reload Config
 vim.keymap.set('n', '<leader>rc', function()
   vim.cmd 'source ~/.config/nvim/init.lua'
-  vim.notify('Config reloaded!', vim.log.levels.INFO, { title = 'Neovim' })
+  -- vim.notify('Config reloaded!', vim.log.levels.INFO, { title = 'Neovim' })
+  vim.api.nvim_echo({ { 'Config reloaded!', 'WarningMsg' } }, false, {})
 end, { desc = 'Reload config' })
 
 -- Keybinds to make split navigation easier.
@@ -206,6 +207,8 @@ require 'config.lazy'
 -- LSPs
 require 'config.lsp'
 -- COMPLETION is handled by blink.cmp in lazy.lua
+-- Terminal
+require 'custom.plugins.term'
 
 -- vim.cmd.colorscheme 'terafox'
 vim.cmd.colorscheme 'vesper'
@@ -218,7 +221,6 @@ vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 -- vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'none', fg = '#F2BE75' })
 
 vim.opt.termguicolors = true
-
 
 -- Show diagnostic popup automatically after cursor stops moving
 vim.api.nvim_create_autocmd('CursorHold', {
@@ -245,36 +247,6 @@ vim.api.nvim_create_autocmd('CursorHold', {
 -- Set the delay (in milliseconds) before showing diagnostic
 vim.opt.updatetime = 500 -- 500ms delay, adjust as needed
 
--- buffer line combos
-vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>')
-vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>')
-vim.keymap.set('n', '<leader>bd', ':bd <CR>', { desc = 'Close buffer' })
-vim.keymap.set('n', '<leader>bh', ':BufferLineMovePrev<CR>', { desc = 'Move buffer left' })
-vim.keymap.set('n', '<leader>bl', ':BufferLineMoveNext<CR>', { desc = 'Move buffer right' })
-vim.keymap.set('n', '<leader>bo', function()
-  local current = vim.api.nvim_get_current_buf()
-  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if buf ~= current and vim.api.nvim_buf_is_valid(buf) then
-      vim.api.nvim_buf_delete(buf, {})
-    end
-  end
-end, { desc = 'Close all buffers except current' })
--- Move buffer to far left
-vim.keymap.set('n', '<leader>bH', function()
-  for i = 1, vim.fn.bufnr '$' do
-    vim.cmd 'BufferLineMovePrev'
-  end
-end, { desc = 'Move buffer to start' })
-
--- Move buffer to far right
-vim.keymap.set('n', '<leader>bL', function()
-  for i = 1, vim.fn.bufnr '$' do
-    vim.cmd 'BufferLineMoveNext'
-  end
-end, { desc = 'Move buffer to end' })
--- pick buffer
-vim.keymap.set('n', '<leader>bp', ':BufferLinePick<CR>', { desc = 'Pick buffer position' })
-
 -- Custom LSP hover window
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
   border = 'rounded',
@@ -287,6 +259,17 @@ vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
 
 vim.keymap.set('n', '<leader>lr', ':LspRestart <CR>', { desc = 'Restart LSP' })
 vim.keymap.set('n', '<leader>li', ':LspInfo <CR>', { desc = 'LSP Info' })
+
+-- Session management keybinds
+vim.keymap.set('n', '<leader>qs', ':lua MiniSessions.select()<CR>', { desc = 'Select/Restore Session' })
+vim.keymap.set('n', '<leader>qw', function()
+  local session_name = vim.fn.input 'Session name: '
+  if session_name ~= '' then
+    require('mini.sessions').write(session_name)
+    vim.notify('Session "' .. session_name .. '" saved!', vim.log.levels.INFO)
+  end
+end, { desc = 'Write/Save Session' })
+vim.keymap.set('n', '<leader>qd', ':lua MiniSessions.delete()<CR>', { desc = 'Delete Session' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

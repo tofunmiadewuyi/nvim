@@ -145,7 +145,7 @@ vim.o.scrolloff = 10
 vim.o.confirm = true
 
 -- hide cms line
-vim.o.cmdheight = 0
+-- vim.o.cmdheight = 0
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -219,7 +219,6 @@ vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 
 vim.opt.termguicolors = true
 
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n><C-o>', { desc = 'Exit terminal and go to previous buffer' })
 
 -- Show diagnostic popup automatically after cursor stops moving
 vim.api.nvim_create_autocmd('CursorHold', {

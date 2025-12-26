@@ -88,11 +88,14 @@ local vtsls_config = dofile(vim.fn.stdpath('config') .. '/lsp/vtsls.lua')
 vtsls_config.cmd = { mason_bin .. 'vtsls', '--stdio' }
 vtsls_config.capabilities = capabilities
 
+local gopls_config = dofile(vim.fn.stdpath('config') .. '/lsp/gopls.lua')
+
 vim.lsp.config('lua_ls', lua_ls_config)
 vim.lsp.config('vtsls', vtsls_config)
+vim.lsp.config('gopls', gopls_config)
 
 -- Enable the LSP servers
-vim.lsp.enable { 'lua_ls', 'vtsls' }
+vim.lsp.enable { 'lua_ls', 'vtsls', 'gopls' }
 
 -- Add a simple LSP info command to replace LspInfo
 vim.api.nvim_create_user_command('LspStatus', function()

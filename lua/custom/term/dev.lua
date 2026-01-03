@@ -1,5 +1,5 @@
-local utils = require('custom.plugins.term.utils')
-local config = require('custom.plugins.term.config')
+local utils = require('custom.term.utils')
+local config = require('custom.term.config')
 
 local M = {}
 

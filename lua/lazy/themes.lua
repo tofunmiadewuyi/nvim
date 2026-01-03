@@ -1,21 +1,22 @@
 return {
 
   { 'ellisonleao/gruvbox.nvim', config = true, opts = ... },
-  { 
+
+  {
     'datsfilipe/vesper.nvim',
     config = function()
-      require('vesper').setup({
+      require('vesper').setup {
         transparent = false,
         italics = {
           comments = true,
           keywords = true,
           functions = true,
           strings = true,
-          variables = true
+          variables = true,
         },
         overrides = {},
-        palette_overrides = {}
-      })
+        palette_overrides = {},
+      }
     end,
   },
 
@@ -48,16 +49,16 @@ return {
     end,
   },
 
-  {
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
-    end,
-  },
+  -- {
+  --   'folke/tokyonight.nvim',
+  --   priority = 1000, -- Make sure to load this before all the other start plugins.
+  --   config = function()
+  --     ---@diagnostic disable-next-line: missing-fields
+  --     require('tokyonight').setup {
+  --       styles = {
+  --         comments = { italic = false }, -- Disable italics in comments
+  --       },
+  --     }
+  --   end,
+  -- },
 }

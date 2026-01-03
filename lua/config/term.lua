@@ -2,9 +2,9 @@
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- Load terminal modules
-local general = require('custom.plugins.term.general')
-local opencode = require('custom.plugins.term.opencode')
-local dev = require('custom.plugins.term.dev')
+local general = require('custom.term.general')
+local opencode = require('custom.term.opencode')
+local dev = require('custom.term.dev')
 
 -- Commands
 vim.api.nvim_create_user_command('Floaterm', general.toggle, {})

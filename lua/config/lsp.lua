@@ -97,7 +97,7 @@ vim.lsp.config('gopls', gopls_config)
 -- Enable the LSP servers
 vim.lsp.enable { 'lua_ls', 'vtsls', 'gopls' }
 
--- Add a simple LSP info command to replace LspInfo
+-- Add a simple LSP info command
 vim.api.nvim_create_user_command('LspStatus', function()
   local clients = vim.lsp.get_clients({ bufnr = 0 })
   if #clients == 0 then
@@ -109,3 +109,18 @@ vim.api.nvim_create_user_command('LspStatus', function()
     end
   end
 end, { desc = 'Show LSP client status for current buffer' })
+
+
+-- Custom LSP hover window
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = 'rounded',
+  max_width = 80,
+  max_height = 20,
+  focusable = false,
+  close_events = { 'CursorMoved', 'BufLeave', 'InsertEnter' },
+  stylize_markdown = true,
+})
+
+vim.keymap.set('n', '<leader>lr', ':LspRestart <CR>', { desc = 'Restart LSP' })
+vim.keymap.set('n', '<leader>ls', ':LspStatus <CR>', { desc = 'LSP Status' })
+

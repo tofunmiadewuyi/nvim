@@ -56,14 +56,9 @@ vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
 
 -- Make line numbers default
 vim.o.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
 vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
@@ -154,16 +149,8 @@ vim.keymap.set('n', '<Esc>', function()
   vim.cmd 'nohlsearch'
 end)
 
--- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
--- vim.keymap.set('n', '<leader>i', function()
---  vim.diagnostic.goto_next()
---  end, opts)
-
--- LEADERS
 vim.keymap.set('n', '<leader>w', ':noa w<Return>', { desc = 'Save file without formatting' })
 vim.keymap.set('n', '<D-s>', ':update<Return>', { desc = 'Save file with formatting' })
--- vim.keymap.set('n', '<leader>q', ':q<Return>', { desc = 'Quit' })
 
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -178,7 +165,7 @@ vim.keymap.set('v', '<D-/>', 'gc', { desc = 'Toggle comment selection', remap = 
 -- Reload Config
 vim.keymap.set('n', '<leader>rc', function()
   vim.cmd 'source ~/.config/nvim/init.lua'
-  -- vim.notify('Config reloaded!', vim.log.levels.INFO, { title = 'Neovim' })
+  vim.notify('Config reloaded!', vim.log.levels.INFO, { title = 'Neovim' })
   vim.api.nvim_echo({ { 'Config reloaded!', 'WarningMsg' } }, false, {})
 end, { desc = 'Reload config' })
 
@@ -190,7 +177,6 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
@@ -200,15 +186,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open diagnostic issue' })
-
 -- LAZY
 require 'config.lazy'
 -- LSPs
 require 'config.lsp'
--- COMPLETION is handled by blink.cmp in lazy.lua
--- Terminal
-require 'custom.plugins.term'
+-- Terminals
+require 'config.term'
+-- Plugins
+require 'custom.plugins'
 
 -- vim.cmd.colorscheme 'terafox'
 vim.cmd.colorscheme 'vesper'
@@ -222,54 +207,9 @@ vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 
 vim.opt.termguicolors = true
 
--- Show diagnostic popup automatically after cursor stops moving
-vim.api.nvim_create_autocmd('CursorHold', {
-  callback = function()
-    local opts = {
-      focusable = false,
-      close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
-      border = 'rounded',
-      source = 'always',
-      prefix = ' ',
-    }
-    local _, winid = vim.diagnostic.open_float(nil, opts)
-    -- Auto-close after 3 seconds
-    if winid then
-      vim.defer_fn(function()
-        if vim.api.nvim_win_is_valid(winid) then
-          vim.api.nvim_win_close(winid, true)
-        end
-      end, 7000)
-    end
-  end,
-})
-
--- Set the delay (in milliseconds) before showing diagnostic
-vim.opt.updatetime = 500 -- 500ms delay, adjust as needed
-
--- Custom LSP hover window
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
-  border = 'rounded',
-  max_width = 80,
-  max_height = 20,
-  focusable = false,
-  close_events = { 'CursorMoved', 'BufLeave', 'InsertEnter' },
-  stylize_markdown = true,
-})
-
-vim.keymap.set('n', '<leader>lr', ':LspRestart <CR>', { desc = 'Restart LSP' })
-vim.keymap.set('n', '<leader>li', ':LspInfo <CR>', { desc = 'LSP Info' })
-
--- Session management keybinds
-vim.keymap.set('n', '<leader>qs', ':lua MiniSessions.select()<CR>', { desc = 'Select/Restore Session' })
-vim.keymap.set('n', '<leader>qw', function()
-  local session_name = vim.fn.input 'Session name: '
-  if session_name ~= '' then
-    require('mini.sessions').write(session_name)
-    vim.notify('Session "' .. session_name .. '" saved!', vim.log.levels.INFO)
-  end
-end, { desc = 'Write/Save Session' })
-vim.keymap.set('n', '<leader>qd', ':lua MiniSessions.delete()<CR>', { desc = 'Delete Session' })
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+--
+--
+--
+--

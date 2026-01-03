@@ -1,5 +1,5 @@
 local M = {}
-local config = require('custom.plugins.term.config')
+local config = require('custom.term.config')
 
 -- Strip ANSI escape codes from text
 function M.strip_ansi_codes(text)

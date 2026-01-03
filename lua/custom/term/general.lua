@@ -1,6 +1,6 @@
 -- general purpose floating terminal
 
-local utils = require 'custom.plugins.term.utils'
+local utils = require 'custom.term.utils'
 
 local M = {}
 

@@ -31,7 +31,7 @@ return { -- SNACKS
     },
     input = { enabled = true },
     picker = { enabled = true },
-    notifier = { enabled = false },
+    notifier = { enabled = true },
     quickfile = { enabled = true },
     lazygit = { enabled = true },
     scope = { enabled = true },

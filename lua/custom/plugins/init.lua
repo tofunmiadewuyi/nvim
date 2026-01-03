@@ -1,1 +1,1 @@
-require 'lua.custom.plugins.diagnostics'
+require 'custom.plugins.diagnostics'

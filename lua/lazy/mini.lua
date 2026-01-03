@@ -7,10 +7,56 @@ vim.keymap.set('n', '<leader>qw', function()
     vim.notify('Session "' .. session_name .. '" saved!', vim.log.levels.INFO)
   end
 end, { desc = 'Write/Save Session' })
+
 vim.keymap.set('n', '<leader>qd', function()
   MiniSessions.delete(nil, { force = true })
-end, { desc = 'Delete Session' })
+end, { desc = 'Delete current Session' })
 
+local function session_exists(name)
+  -- local path = mini_sessions.config.options.directory .. "/" .. name .. ".vim"
+  local path = vim.fn.stdpath 'data' .. '/sessions/' .. name
+  local f = io.open(path, 'r')
+  if f then
+    f:close()
+    return true
+  end
+  return false
+end
+
+vim.api.nvim_create_autocmd('SessionLoadPost', {
+  callback = function()
+    vim.cmd 'filetype detect'
+  end,
+  desc = 'Re-run filetype detection after session load',
+})
+
+-- Detect project and create/save session
+local auto_setup_session = function()
+  -- if nvim was opened with an arg then don't bother
+  if vim.fn.argc() ~= 0 then
+    vim.notify 'Session excluded'
+    return
+  end
+
+  local fs_util = require 'custom.plugins.fs_util'
+
+  local markers = { '.git', 'package.json', 'pyproject.toml', 'Cargo.toml', 'go.mod' }
+  local root = fs_util.find_project_root(markers)
+
+  if not root then
+    vim.notify 'Could not start session'
+    return
+  end
+
+  local ms = require 'mini.sessions'
+  if session_exists(root) then
+    ms.read(root)
+    vim.notify("Cont'd session @ " .. root)
+  else
+    ms.write(root)
+    vim.notify('Started session @ ' .. root)
+  end
+end
 
 return {
   { -- MINI
@@ -47,6 +93,8 @@ return {
         autowrite = true,
         directory = vim.fn.stdpath 'data' .. '/sessions/',
       }
+
+      vim.api.nvim_create_autocmd('VimEnter', { callback = auto_setup_session })
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,

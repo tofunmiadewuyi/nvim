@@ -70,11 +70,20 @@ return {
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup { n_lines = 500 }
 
+      require('mini.comment').setup()
+
+      require('mini.pairs').setup()
+
+      -- require('mini.files').setup({
+      --   mappings = {
+      --     go_in = '<CR>',
+      --     go_in_plus='L',
+      --     go_out='<esc>',
+      --   }
+      -- })
+      -- vim.keymap.set('n', '<C-b>', MiniFiles.open, { desc = 'Toggle File Explorer' })
+
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup {
         mappings = {
           add = 'ys',
@@ -105,13 +114,13 @@ return {
         use_icons = vim.g.have_nerd_font,
         content = {
           active = function()
-            local mode, mode_hl = MiniStatusline.section_mode { trunc_width = 120 }
-            local git = MiniStatusline.section_git { trunc_width = 75 }
+            local mode, mode_hl = statusline.section_mode { trunc_width = 120 }
+            local git = statusline.section_git { trunc_width = 75 }
             -- local filename = MiniStatusline.section_filename { trunc_width = 140 }
             local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':.')
-            local location = MiniStatusline.section_location { trunc_width = 75 }
+            local location = statusline.section_location { trunc_width = 75 }
 
-            return MiniStatusline.combine_groups {
+            return statusline.combine_groups {
               { hl = mode_hl, strings = { mode } },
               { hl = 'MiniStatuslineDevinfo', strings = { git } },
               -- '%=', -- left/right separator

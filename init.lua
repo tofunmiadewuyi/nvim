@@ -149,7 +149,7 @@ vim.keymap.set('n', '<Esc>', function()
   vim.cmd 'nohlsearch'
 end)
 
-vim.keymap.set('n', '<leader>w', ':noa w<Return>', { desc = 'Save file without formatting' })
+vim.keymap.set('n', '<leader>w', ':noautocmd write<CR>', { desc = 'Save file without formatting' })
 vim.keymap.set('n', '<D-s>', ':update<Return>', { desc = 'Save file with formatting' })
 
 -- TIP: Disable arrow keys in normal mode

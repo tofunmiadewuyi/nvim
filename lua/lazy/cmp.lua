@@ -29,6 +29,49 @@ return {
           },
         },
         opts = {},
+        config = function()
+          local ls = require 'luasnip'
+          vim.keymap.set('i', '<C-s>', function()
+            local ft = vim.bo.filetype
+            local snippets = ls.get_snippets(ft, { type = 'snippets' })
+
+            if not snippets or vim.tbl_isempty(snippets) then
+              snippets = ls.get_snippets('all', { type = 'snippets' })
+            end
+
+            if not snippets or vim.tbl_isempty(snippets) then
+              print('No snippets available for filetype: ' .. ft)
+              return
+            end
+
+            local items = {}
+            for _, snip in ipairs(snippets) do
+              local desc = snip.name or ''
+              if type(snip.dscr) == 'string' then
+                desc = snip.dscr
+              elseif type(snip.dscr) == 'table' then
+                desc = table.concat(snip.dscr, ' ')
+              end
+
+              table.insert(items, {
+                trigger = snip.trigger,
+                description = desc,
+                snippet = snip,
+              })
+            end
+
+            vim.ui.select(items, {
+              prompt = 'Select snippet:',
+              format_item = function(item)
+                return item.trigger .. (item.description ~= '' and ' - ' .. item.description or '')
+              end,
+            }, function(choice)
+              if choice then
+                ls.snip_expand(choice.snippet)
+              end
+            end)
+          end, { desc = 'Expand snippet manually' })
+        end,
       },
       'folke/lazydev.nvim',
     },
@@ -75,11 +118,12 @@ return {
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'path', 'lazydev' },
         providers = {
           lsp = { score_offset = 150 },
           buffer = { score_offset = 100 },
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 50 },
+          snippets = { score_offset = -100 },
         },
       },
 

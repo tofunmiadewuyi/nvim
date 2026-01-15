@@ -4,7 +4,7 @@
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
 ========                                    .-----.          ========
-========         .----------------------.   | === |          ========
+= ======         .----------------------.   | === |          ========
 ========         |.-""""""""""""""""""-.|   |-----|          ========
 ========         ||                    ||   | === |          ========
 ========         ||   KICKSTART.NVIM   ||   |-----|          ========
@@ -44,11 +44,9 @@ What is Kickstart?
 Kickstart Guide:
 
   TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
+--]]
 
 -- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used) --
---]]
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -170,14 +168,12 @@ vim.keymap.set('n', '<leader>rc', function()
 end, { desc = 'Reload config' })
 
 -- Keybinds to make split navigation easier.
---  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Highlight when yanking (copying) text
---  See `:help vim.hl.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
@@ -196,17 +192,18 @@ require 'config.term'
 require 'custom.plugins'
 
 -- vim.cmd.colorscheme 'terafox'
-vim.cmd.colorscheme 'vesper'
+vim.cmd.colorscheme 'vague'
 
 -- Override gitsigns colors after colorscheme loads
-vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#1D422C' })
-vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#474550' })
-vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
+-- vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#1D422C' })
+-- vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#474550' })
+-- vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 -- vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#0E0C19', fg = '#E2E8F0' })
 -- vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'none', fg = '#F2BE75' })
 
 vim.opt.termguicolors = true
 
+vim.keymap.set('i', '<D-v>', '<C-r>+', { noremap = true })
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --

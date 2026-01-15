@@ -12,13 +12,14 @@ local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
 
 require('lazy').setup({
-  require 'lazy.telescope',
+  -- require 'lazy.telescope',
   require 'lazy.treesitter',
   require 'lazy.mini',
   require 'lazy.snacks',
   require 'lazy.themes',
   require 'lazy.buffers',
   require 'lazy.cmp',
+  require 'lazy.opencode',
 
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
@@ -26,13 +27,19 @@ require('lazy').setup({
   -- require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
 
-
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
   { -- LIVE PREVIEW
     'brianhuster/live-preview.nvim',
-    dependencies = {
-      'nvim-telescope/telescope.nvim',
+    -- dependencies = {
+    --   'nvim-telescope/telescope.nvim',
+    -- },
+  },
+
+  { -- COMMENTING
+    'numToStr/Comment.nvim',
+    opts = {
+      -- add any options here
     },
   },
 
@@ -156,11 +163,11 @@ require('lazy').setup({
   },
 
   { -- AUTOTAGS
-  'windwp/nvim-ts-autotag',
-  config = function()
-    require('nvim-ts-autotag').setup()
-  end
-},
+    'windwp/nvim-ts-autotag',
+    config = function()
+      require('nvim-ts-autotag').setup()
+    end,
+  },
 
   { -- TROUBLE
     'folke/trouble.nvim',
@@ -177,25 +184,25 @@ require('lazy').setup({
     cmd = 'Trouble',
     keys = {
       {
-        '<leader>xx',
+        '<leader>dT',
         '<cmd>Trouble diagnostics toggle<cr>',
-        desc = 'Diagnostics (Trouble)',
+        desc = 'Project Diagnostics (Trouble)',
       },
       {
-        '<leader>xX',
+        '<leader>dt',
         '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
         desc = 'Buffer Diagnostics (Trouble)',
       },
-      {
-        '<leader>cs',
-        '<cmd>Trouble symbols toggle focus=false<cr>',
-        desc = 'Symbols (Trouble)',
-      },
-      {
-        '<leader>cl',
-        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
-        desc = 'LSP Definitions / references / ... (Trouble)',
-      },
+      -- {
+      --   '<leader>cs',
+      --   '<cmd>Trouble symbols toggle focus=false<cr>',
+      --   desc = 'Symbols (Trouble)',
+      -- },
+      -- {
+      --   '<leader>cl',
+      --   '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+      --   desc = 'LSP Definitions / references / ... (Trouble)',
+      -- },
     },
   },
 
@@ -218,6 +225,16 @@ require('lazy').setup({
           'TelescopePreviewTitle',
           'TelescopeSelection',
           'TelescopeMatching',
+
+          'MiniStatuslineModeInsert',
+          'MiniStatuslineModeVisual',
+          'MiniStatuslineModeReplace',
+          'MiniStatuslineModeCommand',
+          'MiniStatuslineModeOther',
+          'MiniStatuslineDevinfo',
+          'MiniStatuslineFilename',
+          'MiniStatuslineFileinfo',
+          'MiniStatuslineInactive',
 
           'FloatBorder',
           'FloatTitle',
@@ -297,6 +314,17 @@ require('lazy').setup({
     end,
   },
 
+  { -- LAZY DEV, vim autocompletions and type defs
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        -- Load luvit types when the `vim.uv` word is found
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      },
+    },
+  },
+
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -348,7 +376,6 @@ require('lazy').setup({
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = { signs = false },
   },
-
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the

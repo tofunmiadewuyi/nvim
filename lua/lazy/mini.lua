@@ -70,7 +70,8 @@ return {
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup { n_lines = 500 }
 
-      require('mini.comment').setup()
+      -- can't comment html/vue without external plugin, baffling.
+      -- require('mini.comment').setup()
 
       require('mini.pairs').setup()
 

@@ -117,15 +117,4 @@ return {
       require('telescope').load_extension 'media_files'
     end,
   },
-
-  { -- LAZY DEV, vim autocompletions and type defs
-    'folke/lazydev.nvim',
-    ft = 'lua',
-    opts = {
-      library = {
-        -- Load luvit types when the `vim.uv` word is found
-        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
-      },
-    },
-  },
 }

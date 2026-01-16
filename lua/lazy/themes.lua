@@ -34,23 +34,27 @@ return {
     end,
   },
 
-  { -- nightfox
-    'EdenEast/nightfox.nvim',
-    config = function()
-      require('nightfox').setup {
-        options = {
-          styles = {
-            comments = 'italic',
-            keywords = 'bold',
-            types = 'italic,bold',
-          },
-        },
-      }
-    end,
-  },
+  -- { -- nightfox
+  --   'EdenEast/nightfox.nvim',
+  --   config = function()
+  --     require('nightfox').setup {
+  --       options = {
+  --         styles = {
+  --           comments = 'italic',
+  --           keywords = 'bold',
+  --           types = 'italic,bold',
+  --         },
+  --       },
+  --     }
+  --   end,
+  -- },
 
   {
     'vague-theme/vague.nvim',
+    -- use vim.o.background - 'dark' or :set background=dark
+  },
+  {
+    'gmr458/cold.nvim',
   },
 
   -- {

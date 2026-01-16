@@ -32,6 +32,7 @@ return {
   { -- BUFFERLINE
     'akinsho/bufferline.nvim',
     version = '*',
+    -- enabled = false,
     dependencies = 'nvim-tree/nvim-web-devicons',
     config = function()
       require('bufferline').setup {
@@ -53,7 +54,7 @@ return {
             return true
           end,
         },
-        highlights = require('vesper').bufferline.highlights,
+        -- highlights = require('vesper').bufferline.highlights,
       }
     end,
   },

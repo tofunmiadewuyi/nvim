@@ -39,11 +39,11 @@ return {
         tmux.jump_or_start { suffix = 'ai', cmd = 'opencode --port 3456' }
       end, { desc = 'Toggle opencode' })
 
-      vim.keymap.set({ 'n', 'x' }, 'go', function()
+      vim.keymap.set({ 'n', 'x' }, '<leader>or', function()
         return require('opencode').operator '@this '
       end, { expr = true, desc = 'Add range to opencode' })
 
-      vim.keymap.set('n', 'goo', function()
+      vim.keymap.set('n', '<leader>orr', function()
         return require('opencode').operator '@this ' .. '_'
       end, { expr = true, desc = 'Add line to opencode' })
 

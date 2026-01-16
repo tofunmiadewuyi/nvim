@@ -20,16 +20,17 @@ require('lazy').setup({
   require 'lazy.buffers',
   require 'lazy.cmp',
   require 'lazy.opencode',
+  require 'lazy.yazi',
 
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  require 'kickstart.plugins.neo-tree',
+  -- require 'kickstart.plugins.neo-tree',
 
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
-  { -- LIVE PREVIEW
+  { -- LIVE PREVIEW, for html, markdown etc
     'brianhuster/live-preview.nvim',
     -- dependencies = {
     --   'nvim-telescope/telescope.nvim',
@@ -38,9 +39,7 @@ require('lazy').setup({
 
   { -- COMMENTING
     'numToStr/Comment.nvim',
-    opts = {
-      -- add any options here
-    },
+    opts = {},
   },
 
   { --FLASH

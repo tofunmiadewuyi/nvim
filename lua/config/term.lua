@@ -12,6 +12,7 @@ vim.api.nvim_create_user_command('Floaterm', general.toggle, {})
 vim.api.nvim_create_user_command('Dev', dev.toggle, {})
 
 -- Keybinds
-vim.keymap.set({ 't', 'n' }, '<leader>tt', general.toggle, { desc = 'Toggle floating terminal' })
+vim.keymap.set({ 't', 'n' }, '<leader>tt', general.toggle, { desc = 'Toggle floating/tmux terminal' })
+vim.keymap.set({ 't', 'n' }, '<leader>tn', general.new, { desc = 'New general terminal' })
 -- vim.keymap.set({ 't', 'n' }, '<leader>tc', opencode.toggle, { desc = 'Toggle OpenCode terminal' })
 vim.keymap.set({ 't', 'n' }, '<leader>td', dev.toggle, { desc = 'Toggle dev server terminal' })

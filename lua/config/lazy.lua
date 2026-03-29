@@ -20,13 +20,13 @@ require('lazy').setup({
   require 'lazy.buffers',
   require 'lazy.cmp',
   require 'lazy.opencode',
-  require 'lazy.yazi',
+  -- require 'lazy.yazi',
 
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.neo-tree',
 
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
@@ -308,7 +308,7 @@ require('lazy').setup({
       require('mason').setup()
       require 'config.lsp'
       require('mason-tool-installer').setup {
-        ensure_installed = { 'lua-language-server', 'stylua', 'vue-language-server', 'vtsls', 'prettier' },
+        ensure_installed = { 'lua-language-server', 'stylua', 'vue-language-server', 'vtsls', 'prettier', 'css-lsp' },
       }
     end,
   },
@@ -349,18 +349,18 @@ require('lazy').setup({
           return nil
         else
           return {
-            timeout_ms = 500,
-            lsp_format = 'fallback',
+            timeout_ms = 1000,
+            lsp_format = 'never',
           }
         end
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        javascript = { 'prettier' },
-        typescript = { 'prettier' },
-        vue = { 'prettier' },
-        javascriptreact = { 'prettier' },
-        typescriptreact = { 'prettier' },
+        javascript = { 'eslint_d' },
+        typescript = { 'eslint_d' }, -- or "eslint"
+        vue = { 'eslint_d' },
+        javascriptreact = { 'eslint_d' },
+        typescriptreact = { 'eslint_d' },
         json = { 'prettier' },
         css = { 'prettier' },
         html = { 'prettier' },
@@ -374,6 +374,12 @@ require('lazy').setup({
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = { signs = false },
+  },
+
+  { -- RUST LSP
+    'mrcjkb/rustaceanvim',
+    version = '^5',
+    ft = 'rust',
   },
 }, {
   ui = {

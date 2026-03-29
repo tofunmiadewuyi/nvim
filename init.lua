@@ -192,7 +192,9 @@ require 'config.term'
 require 'custom.plugins'
 
 -- vim.cmd.colorscheme 'terafox'
-vim.cmd.colorscheme 'vague'
+-- vim.cmd.colorscheme 'vague'
+-- vim.cmd.colorscheme 'vesper'
+vim.cmd.colorscheme 'kanagawa-dragon'
 
 -- Override gitsigns colors after colorscheme loads
 -- vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#1D422C' })

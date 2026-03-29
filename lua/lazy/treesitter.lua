@@ -19,6 +19,7 @@ return {
         'vimdoc',
         'css',
         'scss',
+        'rust',
         'jsdoc',
       },
       -- Autoinstall languages that are not installed

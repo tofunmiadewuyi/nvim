@@ -34,6 +34,11 @@ return {
     end,
   },
 
+  {
+    'rebelot/kanagawa.nvim',
+    name = 'kanagawa',
+  },
+
   -- { -- nightfox
   --   'EdenEast/nightfox.nvim',
   --   config = function()
@@ -52,9 +57,6 @@ return {
   {
     'vague-theme/vague.nvim',
     -- use vim.o.background - 'dark' or :set background=dark
-  },
-  {
-    'gmr458/cold.nvim',
   },
 
   -- {

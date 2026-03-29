@@ -42,8 +42,9 @@ local auto_setup_session = function()
 
   local markers = { '.git', 'package.json', 'pyproject.toml', 'Cargo.toml', 'go.mod' }
   local root = fs_util.find_project_root(markers)
+  local root_full = fs_util.find_project_root(markers, { fullpath = true })
 
-  if not root then
+  if not root or not root_full then
     vim.notify 'Could not start session'
     return
   end
@@ -51,8 +52,10 @@ local auto_setup_session = function()
   local ms = require 'mini.sessions'
   if session_exists(root) then
     ms.read(root)
+    vim.cmd.cd(root_full)
     vim.notify("Cont'd session @ " .. root)
   else
+    vim.cmd.cd(root_full)
     ms.write(root)
     vim.notify('Started session @ ' .. root)
   end

@@ -96,12 +96,21 @@ vtsls_config.capabilities = capabilities
 
 local gopls_config = dofile(vim.fn.stdpath('config') .. '/lsp/gopls.lua')
 
+local zls_config = dofile(vim.fn.stdpath('config') .. '/lsp/zls.lua')
+zls_config.capabilities = capabilities
+
+local cssls_config = dofile(vim.fn.stdpath('config') .. '/lsp/cssls.lua')
+cssls_config.cmd = { mason_bin .. 'vscode-css-language-server', '--stdio' }
+cssls_config.capabilities = capabilities
+
 vim.lsp.config('lua_ls', lua_ls_config)
 vim.lsp.config('vtsls', vtsls_config)
 vim.lsp.config('gopls', gopls_config)
+vim.lsp.config('zls', zls_config)
+vim.lsp.config('cssls', cssls_config)
 
 -- Enable the LSP servers
-vim.lsp.enable { 'lua_ls', 'vtsls', 'gopls' }
+vim.lsp.enable { 'lua_ls', 'vtsls', 'gopls', 'zls', 'cssls' }
 
 -- Add a simple LSP info command
 vim.api.nvim_create_user_command('LspStatus', function()

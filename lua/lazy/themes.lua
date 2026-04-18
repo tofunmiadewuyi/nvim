@@ -1,3 +1,10 @@
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern = '*',
+  callback = function()
+    vim.api.nvim_set_hl(0, 'Normal',      { bg = '#0C0C0C' })
+    vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#0C0C0C' })
+  end,
+})
 return {
 
   { 'ellisonleao/gruvbox.nvim', config = true, opts = ... },

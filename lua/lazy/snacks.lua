@@ -30,7 +30,7 @@ return { -- SNACKS
       only_current = true,
     },
     input = { enabled = true },
-    picker = { enabled = true },
+    picker = { enabled = true, layout = 'vertical' },
     notifier = { enabled = true },
     quickfile = { enabled = true },
     lazygit = { enabled = true },

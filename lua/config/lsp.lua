@@ -85,6 +85,8 @@ local mason_bin = vim.fn.stdpath('data') .. '/mason/bin/'
 local capabilities = require('blink.cmp').get_lsp_capabilities()
 
 -- Load configurations and add command paths + capabilities
+dofile(vim.fn.stdpath('config') .. '/lsp/rust_ls.lua')
+
 local lua_ls_config = dofile(vim.fn.stdpath('config') .. '/lsp/lua_ls.lua')
 lua_ls_config.cmd = { mason_bin .. 'lua-language-server' }
 lua_ls_config.filetypes = { 'lua' }

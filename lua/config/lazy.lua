@@ -30,13 +30,6 @@ require('lazy').setup({
 
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
 
-  { -- LIVE PREVIEW, for html, markdown etc
-    'brianhuster/live-preview.nvim',
-    -- dependencies = {
-    --   'nvim-telescope/telescope.nvim',
-    -- },
-  },
-
   { -- COMMENTING
     'numToStr/Comment.nvim',
     opts = {},
@@ -168,82 +161,45 @@ require('lazy').setup({
     end,
   },
 
-  { -- TROUBLE
-    'folke/trouble.nvim',
-    opts = {
-      focus = true,
-      win = {
-        type = 'float',
-        border = 'rounded',
-        relative = 'editor',
-        position = 'right',
-        size = { width = 0.6, height = 0.8 },
-      },
-    },
-    cmd = 'Trouble',
-    keys = {
-      {
-        '<leader>dT',
-        '<cmd>Trouble diagnostics toggle<cr>',
-        desc = 'Project Diagnostics (Trouble)',
-      },
-      {
-        '<leader>dt',
-        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
-        desc = 'Buffer Diagnostics (Trouble)',
-      },
-      -- {
-      --   '<leader>cs',
-      --   '<cmd>Trouble symbols toggle focus=false<cr>',
-      --   desc = 'Symbols (Trouble)',
-      -- },
-      -- {
-      --   '<leader>cl',
-      --   '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
-      --   desc = 'LSP Definitions / references / ... (Trouble)',
-      -- },
-    },
-  },
-
-  { -- TRANSPARENT
-    'xiyaowong/transparent.nvim',
-    name = 'transparent',
-    config = function()
-      require('transparent').setup {
-        extra_groups = {
-          'TelescopeNormal',
-          'TelescopeBorder',
-          'TelescopePromptBorder',
-          'TelescopeResultsBorder',
-          'TelescopePreviewBorder',
-          'TelescopePromptNormal',
-          'TelescopeResultsNormal',
-          'TelescopePreviewNormal',
-          'TelescopePromptTitle',
-          'TelescopeResultsTitle',
-          'TelescopePreviewTitle',
-          'TelescopeSelection',
-          'TelescopeMatching',
-
-          'MiniStatuslineModeInsert',
-          'MiniStatuslineModeVisual',
-          'MiniStatuslineModeReplace',
-          'MiniStatuslineModeCommand',
-          'MiniStatuslineModeOther',
-          'MiniStatuslineDevinfo',
-          'MiniStatuslineFilename',
-          'MiniStatuslineFileinfo',
-          'MiniStatuslineInactive',
-
-          'FloatBorder',
-          'FloatTitle',
-          'Pmenu',
-          'PmenuBorder',
-          'NormalFloat',
-        },
-      }
-    end,
-  },
+  -- { -- TRANSPARENT
+  --   'xiyaowong/transparent.nvim',
+  --   name = 'transparent',
+  --   config = function()
+  --     require('transparent').setup {
+  --       extra_groups = {
+  --         'TelescopeNormal',
+  --         'TelescopeBorder',
+  --         'TelescopePromptBorder',
+  --         'TelescopeResultsBorder',
+  --         'TelescopePreviewBorder',
+  --         'TelescopePromptNormal',
+  --         'TelescopeResultsNormal',
+  --         'TelescopePreviewNormal',
+  --         'TelescopePromptTitle',
+  --         'TelescopeResultsTitle',
+  --         'TelescopePreviewTitle',
+  --         'TelescopeSelection',
+  --         'TelescopeMatching',
+  --
+  --         'MiniStatuslineModeInsert',
+  --         'MiniStatuslineModeVisual',
+  --         'MiniStatuslineModeReplace',
+  --         'MiniStatuslineModeCommand',
+  --         'MiniStatuslineModeOther',
+  --         'MiniStatuslineDevinfo',
+  --         'MiniStatuslineFilename',
+  --         'MiniStatuslineFileinfo',
+  --         'MiniStatuslineInactive',
+  --
+  --         'FloatBorder',
+  --         'FloatTitle',
+  --         'Pmenu',
+  --         'PmenuBorder',
+  --         'NormalFloat',
+  --       },
+  --     }
+  --   end,
+  -- },
 
   { -- WHICH KEY
     'folke/which-key.nvim',
@@ -303,6 +259,7 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
       { 'j-hui/fidget.nvim', opts = {} },
       'saghen/blink.cmp',
+      'folke/lazydev.nvim', -- must load before lua_ls config is applied
     },
     config = function()
       require('mason').setup()
@@ -315,11 +272,10 @@ require('lazy').setup({
 
   { -- LAZY DEV, vim autocompletions and type defs
     'folke/lazydev.nvim',
-    ft = 'lua',
     opts = {
       library = {
-        -- Load luvit types when the `vim.uv` word is found
         { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+        { path = vim.fn.expand '~/.hammerspoon/Spoons/EmmyLua.spoon/annotations' },
       },
     },
   },

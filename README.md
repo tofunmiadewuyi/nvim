@@ -1,241 +1,271 @@
-# kickstart.nvim
+# My Neovim Config
 
-## Introduction
+This is my personal Neovim setup.
 
-A starting point for Neovim that is:
+It started from `kickstart.nvim`, but it is no longer the stock template. I have split the config into focused modules, changed the editing workflow around my own habits, and added a few custom tools for terminals, sessions, diagnostics, and language-server setup.
 
-* Small
-* Single-file
-* Completely Documented
+The goal of this config is simple:
 
-**NOT** a Neovim distribution, but instead a starting point for your configuration.
+- keep startup and maintenance straightforward
+- make project navigation fast
+- make LSP and diagnostics usable without extra noise
+- make terminal-heavy web development feel native inside Neovim
 
-## Installation
+## What This Config Is Built Around
 
-### Install Neovim
+This setup is for how I actually work, not for trying to be a full Neovim distribution.
 
-Kickstart.nvim targets *only* the latest
-['stable'](https://github.com/neovim/neovim/releases/tag/stable) and latest
-['nightly'](https://github.com/neovim/neovim/releases/tag/nightly) of Neovim.
-If you are experiencing issues, please make sure you have the latest versions.
+It is centered around:
 
-### Install External Dependencies
+- `lazy.nvim` for plugin management
+- `snacks.nvim` for picker, dashboard, git UI, and general navigation
+- `blink.cmp` + `LuaSnip` for completion and snippets
+- built-in Neovim LSP with separate per-server configs
+- `mini.nvim` modules for sessions, statusline, text objects, pairs, and surround
+- tmux-aware terminals for running shells and dev servers
 
-External Requirements:
-- Basic utils: `git`, `make`, `unzip`, C Compiler (`gcc`)
-- [ripgrep](https://github.com/BurntSushi/ripgrep#installation),
-  [fd-find](https://github.com/sharkdp/fd#installation)
-- Clipboard tool (xclip/xsel/win32yank or other depending on the platform)
-- A [Nerd Font](https://www.nerdfonts.com/): optional, provides various icons
-  - if you have it set `vim.g.have_nerd_font` in `init.lua` to true
-- Emoji fonts (Ubuntu only, and only if you want emoji!) `sudo apt install fonts-noto-color-emoji`
-- Language Setup:
-  - If you want to write Typescript, you need `npm`
-  - If you want to write Golang, you will need `go`
-  - etc.
+The overall style is minimal but practical: relative numbers, small statusline, strong LSP defaults, fast search, session restore, and a floating-terminal workflow when needed.
 
-> [!NOTE]
-> See [Install Recipes](#Install-Recipes) for additional Windows and Linux specific notes
-> and quick install snippets
+## Features
 
-### Install Kickstart
+- Automatic plugin bootstrap through `lazy.nvim`
+- Project sessions with auto-detect and auto-restore via `mini.sessions`
+- `Snacks` dashboard and picker-first navigation
+- LSP setup for:
+  - Lua
+  - TypeScript / JavaScript / Vue
+  - Go
+  - Zig
+  - CSS / SCSS / Less
+- Completion with `blink.cmp`
+- Snippets with `LuaSnip` and `friendly-snippets`
+- Buffer management with `bufferline.nvim`
+- Git integration with `gitsigns.nvim` and `Snacks.lazygit()`
+- Folding with `nvim-ufo`
+- Motion with `flash.nvim`
+- Auto tag closing with `nvim-ts-autotag`
+- Floating diagnostics with yank/copy support
+- Floating terminal support and tmux-backed terminal workflows
+- Dev server launcher that detects `package.json` and runs `dev`
+- Browser auto-open when a localhost URL is detected from terminal output
+- Custom tmux helpers for jumping to or creating task-specific windows
 
-> [!NOTE]
-> [Backup](#FAQ) your previous configuration (if any exists)
+## Structure
 
-Neovim's configurations are located under the following paths, depending on your OS:
+This config is organized by responsibility instead of keeping everything inside `init.lua`.
 
-| OS | PATH |
-| :- | :--- |
-| Linux, MacOS | `$XDG_CONFIG_HOME/nvim`, `~/.config/nvim` |
-| Windows (cmd)| `%localappdata%\nvim\` |
-| Windows (powershell)| `$env:LOCALAPPDATA\nvim\` |
-
-#### Recommended Step
-
-[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) this repo
-so that you have your own copy that you can modify, then install by cloning the
-fork to your machine using one of the commands below, depending on your OS.
-
-> [!NOTE]
-> Your fork's URL will be something like this:
-> `https://github.com/<your_github_username>/kickstart.nvim.git`
-
-You likely want to remove `lazy-lock.json` from your fork's `.gitignore` file
-too - it's ignored in the kickstart repo to make maintenance easier, but it's
-[recommended to track it in version control](https://lazy.folke.io/usage/lockfile).
-
-#### Clone kickstart.nvim
-
-> [!NOTE]
-> If following the recommended step above (i.e., forking the repo), replace
-> `nvim-lua` with `<your_github_username>` in the commands below
-
-<details><summary> Linux and Mac </summary>
-
-```sh
-git clone https://github.com/nvim-lua/kickstart.nvim.git "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim
+```text
+.
+├── init.lua
+├── lua/
+│   ├── config/
+│   │   ├── lazy.lua
+│   │   ├── lsp.lua
+│   │   └── term.lua
+│   ├── custom/
+│   │   ├── plugins/
+│   │   ├── term/
+│   │   └── utils/
+│   ├── kickstart/
+│   └── lazy/
+├── lsp/
+├── snippets/
+└── doc/
 ```
 
-</details>
+### Important Files
 
-<details><summary> Windows </summary>
+- `init.lua`
+  Sets editor options, keymaps, autocommands, and loads the main modules.
 
-If you're using `cmd.exe`:
+- `lua/config/lazy.lua`
+  Bootstraps `lazy.nvim` and registers the plugin specs.
 
-```
-git clone https://github.com/nvim-lua/kickstart.nvim.git "%localappdata%\nvim"
-```
+- `lua/config/lsp.lua`
+  Configures diagnostics, LSP keymaps, hover UI, capabilities, and enables language servers.
 
-If you're using `powershell.exe`
+- `lua/config/term.lua`
+  Defines terminal commands and terminal keymaps.
 
-```
-git clone https://github.com/nvim-lua/kickstart.nvim.git "${env:LOCALAPPDATA}\nvim"
-```
+- `lua/lazy/*.lua`
+  Plugin specs grouped by purpose instead of keeping one giant plugin file.
 
-</details>
+- `lua/custom/term/*.lua`
+  My terminal workflow:
+  - general floating terminal
+  - dev server terminal
+  - shared terminal utilities
+  - runtime terminal config
 
-### Post Installation
+- `lua/custom/utils/tmux.lua`
+  Tmux integration for creating or jumping to named windows from inside Neovim.
 
-Start Neovim
+- `lua/custom/plugins/diagnostics.lua`
+  Extra diagnostic UX: popup on hold, jump helpers, and yank diagnostics for the current line.
 
-```sh
-nvim
-```
+- `lua/custom/plugins/fs_util.lua`
+  Small filesystem helpers, mainly for project-root detection.
 
-That's it! Lazy will install all the plugins you have. Use `:Lazy` to view
-the current plugin status. Hit `q` to close the window.
+- `lsp/*.lua`
+  Per-language server configuration files.
 
-#### Read The Friendly Documentation
+- `snippets/`
+  Custom snippets, currently including Vue snippets.
 
-Read through the `init.lua` file in your configuration folder for more
-information about extending and exploring Neovim. That also includes
-examples of adding popularly requested plugins.
+## How It Works
 
-> [!NOTE]
-> For more information about a particular plugin check its repository's documentation.
+### Startup
 
+When Neovim starts:
 
-### Getting Started
+1. `init.lua` applies the base editor settings and keymaps.
+2. `config.lazy` bootstraps plugins if needed.
+3. `config.lsp` sets up diagnostics and language servers.
+4. `config.term` registers terminal commands.
+5. `custom.plugins` loads extra local behavior such as diagnostic helpers.
+6. The colorscheme is applied.
 
-[The Only Video You Need to Get Started with Neovim](https://youtu.be/m8C0Cq9Uv9o)
+### Sessions
 
-### FAQ
+On `VimEnter`, the config tries to detect the project root by looking for markers such as:
 
-* What should I do if I already have a pre-existing Neovim configuration?
-  * You should back it up and then delete all associated files.
-  * This includes your existing init.lua and the Neovim files in `~/.local`
-    which can be deleted with `rm -rf ~/.local/share/nvim/`
-* Can I keep my existing configuration in parallel to kickstart?
-  * Yes! You can use [NVIM_APPNAME](https://neovim.io/doc/user/starting.html#%24NVIM_APPNAME)`=nvim-NAME`
-    to maintain multiple configurations. For example, you can install the kickstart
-    configuration in `~/.config/nvim-kickstart` and create an alias:
-    ```
-    alias nvim-kickstart='NVIM_APPNAME="nvim-kickstart" nvim'
-    ```
-    When you run Neovim using `nvim-kickstart` alias it will use the alternative
-    config directory and the matching local directory
-    `~/.local/share/nvim-kickstart`. You can apply this approach to any Neovim
-    distribution that you would like to try out.
-* What if I want to "uninstall" this configuration:
-  * See [lazy.nvim uninstall](https://lazy.folke.io/usage#-uninstalling) information
-* Why is the kickstart `init.lua` a single file? Wouldn't it make sense to split it into multiple files?
-  * The main purpose of kickstart is to serve as a teaching tool and a reference
-    configuration that someone can easily use to `git clone` as a basis for their own.
-    As you progress in learning Neovim and Lua, you might consider splitting `init.lua`
-    into smaller parts. A fork of kickstart that does this while maintaining the
-    same functionality is available here:
-    * [kickstart-modular.nvim](https://github.com/dam9000/kickstart-modular.nvim)
-  * Discussions on this topic can be found here:
-    * [Restructure the configuration](https://github.com/nvim-lua/kickstart.nvim/issues/218)
-    * [Reorganize init.lua into a multi-file setup](https://github.com/nvim-lua/kickstart.nvim/pull/473)
+- `.git`
+- `package.json`
+- `pyproject.toml`
+- `Cargo.toml`
+- `go.mod`
 
-### Install Recipes
+If a saved session exists for that project, it restores it. Otherwise it creates one. This makes the config feel project-aware without needing manual setup every time.
 
-Below you can find OS specific install instructions for Neovim and dependencies.
+### LSP
 
-After installing all the dependencies continue with the [Install Kickstart](#Install-Kickstart) step.
+LSP is configured in two layers:
 
-#### Windows Installation
+- shared behavior in [`lua/config/lsp.lua`](/Users/mac/.config/nvim/lua/config/lsp.lua)
+- per-server settings in [`lsp/`](/Users/mac/.config/nvim/lsp)
 
-<details><summary>Windows with Microsoft C++ Build Tools and CMake</summary>
-Installation may require installing build tools and updating the run command for `telescope-fzf-native`
+That keeps global behavior consistent while allowing language-specific overrides. Completion capabilities are provided through `blink.cmp`.
 
-See `telescope-fzf-native` documentation for [more details](https://github.com/nvim-telescope/telescope-fzf-native.nvim#installation)
+### Terminal Workflow
 
-This requires:
+The terminal system is one of the more personal parts of this config.
 
-- Install CMake and the Microsoft C++ Build Tools on Windows
+- `<leader>tt` toggles the main terminal
+- `<leader>tn` creates a new terminal target
+- `<leader>td` opens the dev terminal flow
 
-```lua
-{'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
-```
-</details>
-<details><summary>Windows with gcc/make using chocolatey</summary>
-Alternatively, one can install gcc and make which don't require changing the config,
-the easiest way is to use choco:
+Depending on [`lua/custom/term/config.lua`](/Users/mac/.config/nvim/lua/custom/term/config.lua), terminals can run either:
 
-1. install [chocolatey](https://chocolatey.org/install)
-either follow the instructions on the page or use winget,
-run in cmd as **admin**:
-```
-winget install --accept-source-agreements chocolatey.chocolatey
-```
+- inside floating Neovim terminals
+- in dedicated tmux windows
 
-2. install all requirements using choco, exit the previous cmd and
-open a new one so that choco path is set, and run in cmd as **admin**:
-```
-choco install -y neovim git ripgrep wget fd unzip gzip mingw make
-```
-</details>
-<details><summary>WSL (Windows Subsystem for Linux)</summary>
+The dev terminal can inspect `package.json`, detect a `dev` script, and run `pnpm run dev` or `npm run dev`. If the command outputs a local URL, the config can open the browser automatically.
 
-```
-wsl --install
-wsl
-sudo add-apt-repository ppa:neovim-ppa/unstable -y
-sudo apt update
-sudo apt install make gcc ripgrep unzip git xclip neovim
-```
-</details>
+## Key Workflow Notes
 
-#### Linux Install
-<details><summary>Ubuntu Install Steps</summary>
+- Search, file finding, git history, diagnostics, and symbol navigation are primarily handled through `Snacks`.
+- Buffer movement and ordering are handled with `bufferline`.
+- Diagnostics are intentionally visible but controlled:
+  - popup on cursor hold
+  - quick jump next/previous
+  - copy current line diagnostics to clipboard
+- The statusline is kept small and readable with `mini.statusline`.
+- The colorscheme defaults to `kanagawa-dragon`.
 
-```
-sudo add-apt-repository ppa:neovim-ppa/unstable -y
-sudo apt update
-sudo apt install make gcc ripgrep unzip git xclip neovim
-```
-</details>
-<details><summary>Debian Install Steps</summary>
+## Keymaps I Rely On
 
-```
-sudo apt update
-sudo apt install make gcc ripgrep unzip git xclip curl
+This is not a full keymap reference, just the main workflow keys.
 
-# Now we install nvim
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-sudo rm -rf /opt/nvim-linux-x86_64
-sudo mkdir -p /opt/nvim-linux-x86_64
-sudo chmod a+rX /opt/nvim-linux-x86_64
-sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+### General
 
-# make it available in /usr/local/bin, distro installs to /usr/bin
-sudo ln -sf /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/
-```
-</details>
-<details><summary>Fedora Install Steps</summary>
+- `<leader>w` save without formatting
+- `<leader>rc` reload config
+- `<Esc>` clear search highlight
+- `<C-h/j/k/l>` move between windows
 
-```
-sudo dnf install -y gcc make git ripgrep fd-find unzip neovim
-```
-</details>
+### Search / Navigation
 
-<details><summary>Arch Install Steps</summary>
+- `<leader>sf` search files
+- `<leader>sg` grep
+- `<leader>sh` help
+- `<leader>sk` keymaps
+- `<leader>ss` symbols
 
-```
-sudo pacman -S --noconfirm --needed gcc make git ripgrep fd unzip neovim
-```
-</details>
+### Buffers
 
+- `<Tab>` next buffer
+- `<S-Tab>` previous buffer
+- `<leader>bd` delete buffer
+- `<leader>bo` close all other buffers
+- `<leader>bp` pick buffer
+
+### Git
+
+- `<leader>gg` open lazygit
+- `<leader>gb` branches
+- `<leader>gl` git log
+- `<leader>gs` git status
+
+### LSP
+
+- `grd` definitions
+- `grr` references
+- `gri` implementations
+- `grt` type definitions
+- `<leader>lr` restart LSP
+- `<leader>ls` show attached LSP clients
+
+### Diagnostics
+
+- `<leader>di` open diagnostic float
+- `<leader>dn` next diagnostic
+- `<leader>dp` previous diagnostic
+- `<leader>dy` yank diagnostics under cursor
+
+### Sessions
+
+- `<leader>qs` select / restore session
+- `<leader>qw` save session
+- `<leader>qd` delete session
+
+### Terminal
+
+- `<leader>tt` toggle terminal
+- `<leader>tn` new terminal
+- `<leader>td` toggle dev server terminal
+- `<Esc><Esc>` leave terminal mode
+
+## Requirements
+
+At minimum, this config expects:
+
+- Neovim stable or newer
+- `git`
+- `make`
+- a Nerd Font
+- `ripgrep`
+- `fd`
+- `tmux` if using the tmux terminal workflow
+
+Language tooling depends on what you edit. For this setup, that commonly means:
+
+- `node` / `npm` or `pnpm`
+- `go`
+- `zig`
+
+## If You Want To Change It
+
+The easiest way to extend this config is:
+
+1. add or edit plugin specs in [`lua/lazy/`](/Users/mac/.config/nvim/lua/lazy)
+2. keep shared setup in [`lua/config/`](/Users/mac/.config/nvim/lua/config)
+3. put custom local behavior in [`lua/custom/`](/Users/mac/.config/nvim/lua/custom)
+4. keep per-language LSP changes in [`lsp/`](/Users/mac/.config/nvim/lsp)
+
+That separation is the main reason this config stays understandable.
+
+## Summary
+
+This is my Neovim config: a modular, tmux-friendly, LSP-focused setup built for everyday coding, especially project-based work and frontend/dev-server workflows.
+
+It keeps the core simple, moves custom logic into small local modules, and favors tools that make navigation, diagnostics, terminals, and session management feel fast.

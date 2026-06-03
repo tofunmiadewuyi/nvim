@@ -321,6 +321,8 @@ require('lazy').setup({
         css = { 'prettier' },
         html = { 'prettier' },
         go = { 'goimports' },
+        objc = { 'clang-format' },
+        objcpp = { 'clang-format' },
       },
     },
   },
@@ -330,6 +332,23 @@ require('lazy').setup({
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
     opts = { signs = false },
+  },
+
+  { -- DIFFVIEW
+    'sindrets/diffview.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    keys = {
+      { '<leader>gd', '<cmd>DiffviewOpen<cr>', desc = 'Diff view (working tree)' },
+      { '<leader>gh', '<cmd>DiffviewFileHistory %<cr>', desc = 'File git history' },
+      { '<leader>gH', '<cmd>DiffviewFileHistory<cr>', desc = 'Repo git history' },
+    },
+    opts = {
+      keymaps = {
+        view = { { 'n', 'q', '<cmd>DiffviewClose<cr>', { desc = 'Close diff view' } } },
+        file_panel = { { 'n', 'q', '<cmd>DiffviewClose<cr>', { desc = 'Close diff view' } } },
+        file_history_panel = { { 'n', 'q', '<cmd>DiffviewClose<cr>', { desc = 'Close diff view' } } },
+      },
+    },
   },
 
   { -- RUST LSP

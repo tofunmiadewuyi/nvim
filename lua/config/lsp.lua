@@ -97,9 +97,14 @@ vtsls_config.cmd = { mason_bin .. 'vtsls', '--stdio' }
 vtsls_config.capabilities = capabilities
 
 local gopls_config = dofile(vim.fn.stdpath('config') .. '/lsp/gopls.lua')
+gopls_config.capabilities = capabilities
 
 local zls_config = dofile(vim.fn.stdpath('config') .. '/lsp/zls.lua')
 zls_config.capabilities = capabilities
+
+local clangd_config = dofile(vim.fn.stdpath('config') .. '/lsp/clangd.lua')
+clangd_config.cmd = { mason_bin .. 'clangd', '--background-index', '--clang-tidy' }
+clangd_config.capabilities = capabilities
 
 local cssls_config = dofile(vim.fn.stdpath('config') .. '/lsp/cssls.lua')
 cssls_config.cmd = { mason_bin .. 'vscode-css-language-server', '--stdio' }
@@ -109,10 +114,11 @@ vim.lsp.config('lua_ls', lua_ls_config)
 vim.lsp.config('vtsls', vtsls_config)
 vim.lsp.config('gopls', gopls_config)
 vim.lsp.config('zls', zls_config)
+vim.lsp.config('clangd', clangd_config)
 vim.lsp.config('cssls', cssls_config)
 
 -- Enable the LSP servers
-vim.lsp.enable { 'lua_ls', 'vtsls', 'gopls', 'zls', 'cssls' }
+vim.lsp.enable { 'lua_ls', 'vtsls', 'gopls', 'zls', 'clangd', 'cssls' }
 
 -- Add a simple LSP info command
 vim.api.nvim_create_user_command('LspStatus', function()
@@ -140,4 +146,5 @@ vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
 
 vim.keymap.set('n', '<leader>lr', ':LspRestart <CR>', { desc = 'Restart LSP' })
 vim.keymap.set('n', '<leader>ls', ':LspStatus <CR>', { desc = 'LSP Status' })
+vim.keymap.set('n', '<leader>bb', function() vim.lsp.buf.format() end, { desc = 'Format buffer (LSP)' })
 

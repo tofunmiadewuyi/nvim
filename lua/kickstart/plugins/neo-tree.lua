@@ -2,6 +2,20 @@
 -- https://github.com/nvim-neo-tree/neo-tree.nvim
 
 vim.keymap.set('n', '<M-b>', ':Neotree toggle<CR>', { desc = 'Toggle File Explorer' })
+
+-- Close Neo-tree before quitting so its buffer isn't restored on the next session
+vim.api.nvim_create_autocmd('QuitPre', {
+  group = vim.api.nvim_create_augroup('neotree-close-on-quit', { clear = true }),
+  callback = function()
+    vim.cmd 'silent! Neotree close'
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype == 'neo-tree' then
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+      end
+    end
+  end,
+})
+
 return {
   'nvim-neo-tree/neo-tree.nvim',
   version = '*',

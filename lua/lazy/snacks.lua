@@ -83,13 +83,14 @@ return { -- SNACKS
       end,
       desc = 'Git Stash',
     },
-    {
-      '<leader>gd',
-      function()
-        Snacks.picker.git_diff()
-      end,
-      desc = 'Git Diff (Hunks)',
-    },
+    -- commented out: conflicts with diffview <leader>gd
+    -- {
+    --   '<leader>gd',
+    --   function()
+    --     Snacks.picker.git_diff()
+    --   end,
+    --   desc = 'Git Diff (Hunks)',
+    -- },
     {
       '<leader>gf',
       function()

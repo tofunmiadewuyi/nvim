@@ -105,6 +105,19 @@ return {
         autoread = false,
         autowrite = true,
         directory = vim.fn.stdpath 'data' .. '/sessions/',
+        hooks = {
+          -- Strip Neo-tree out before the session is written so it isn't restored
+          pre = {
+            write = function()
+              vim.cmd 'silent! Neotree close'
+              for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype == 'neo-tree' then
+                  pcall(vim.api.nvim_buf_delete, buf, { force = true })
+                end
+              end
+            end,
+          },
+        },
       }
 
       vim.api.nvim_create_autocmd('VimEnter', { callback = auto_setup_session })

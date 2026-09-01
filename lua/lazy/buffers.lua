@@ -1,14 +1,17 @@
 -- buffer line combos
 vim.keymap.set('n', '<Tab>', ':BufferLineCycleNext<CR>')
 vim.keymap.set('n', '<S-Tab>', ':BufferLineCyclePrev<CR>')
-vim.keymap.set('n', '<leader>bd', ':bd <CR>', { desc = 'Close buffer' })
+vim.keymap.set('n', '<leader>bd', function()
+  require('mini.bufremove').delete(0, false)
+end, { desc = 'Close buffer' })
 vim.keymap.set('n', '<leader>bh', ':BufferLineMovePrev<CR>', { desc = 'Move buffer left' })
 vim.keymap.set('n', '<leader>bl', ':BufferLineMoveNext<CR>', { desc = 'Move buffer right' })
 vim.keymap.set('n', '<leader>bo', function()
+  local bufremove = require 'mini.bufremove'
   local current = vim.api.nvim_get_current_buf()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if buf ~= current and vim.api.nvim_buf_is_valid(buf) then
-      vim.api.nvim_buf_delete(buf, {})
+    if buf ~= current and vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted then
+      bufremove.delete(buf, false)
     end
   end
 end, { desc = 'Close all buffers except current' })

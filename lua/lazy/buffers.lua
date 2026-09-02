@@ -38,8 +38,8 @@ return {
       require('bufferline').setup {
         options = {
           diagnostics = 'nvim_lsp',
-          separator_style = 'thick', -- or "slant" for underlines
-          show_buffer_close_icons = false,
+          separator_style = 'thick',           -- or "slant" for underlines
+          show_buffer_close_icons = false, 
           -- show_close_icon = false,
           custom_filter = function(buf_number)
             local buf_name = vim.fn.bufname(buf_number)
@@ -54,7 +54,7 @@ return {
             return true
           end,
         },
-        -- highlights = require('vesper').bufferline.highlights,
+        -- highlights = require('everforest').bufferline.highlights,
       }
     end,
   },

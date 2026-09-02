@@ -123,4 +123,5 @@ require 'config.term'
 require 'custom.plugins'
 
 -- COLORSCHEME
-vim.cmd.colorscheme 'kanagawa-dragon'
+vim.o.background=dark
+vim.cmd.colorscheme 'everforest'

@@ -19,7 +19,7 @@ require('lazy').setup({
   require 'lazy.themes',
   require 'lazy.buffers',
   require 'lazy.cmp',
-  require 'lazy.opencode',
+  -- require 'lazy.opencode',
   -- require 'lazy.yazi',
 
   -- require 'kickstart.plugins.debug',
@@ -356,6 +356,17 @@ require('lazy').setup({
     version = '^5',
     ft = 'rust',
   },
+
+  { -- MERMAID
+    "kevalin/mermaid.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    config = function()
+        require("mermaid").setup()
+
+        -- Install the Tree-sitter parser:
+        -- :TSInstall mermaid
+    end,
+}
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the

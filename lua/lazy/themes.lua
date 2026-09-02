@@ -1,13 +1,21 @@
-vim.api.nvim_create_autocmd('ColorScheme', {
-  pattern = '*',
-  callback = function()
-    -- vim.api.nvim_set_hl(0, 'Normal',      { bg = '#0C0C0C' })
-    -- vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#0C0C0C' })
-  end,
-})
 return {
 
   { 'ellisonleao/gruvbox.nvim', config = true, opts = ... },
+
+  {
+    "neanias/everforest-nvim",
+    version = false,
+    lazy = false,
+    priority = 1000,
+    -- Optional; default configuration will be used if setup isn't called.
+    config = function()
+      require("everforest").setup({
+        background = "hard",
+        transparent_background_level = 2,
+      })
+      vim.cmd([[colorscheme everforest]])
+    end,
+  },
 
   {
     'datsfilipe/vesper.nvim',
